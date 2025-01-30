@@ -4,7 +4,6 @@ import os
 import concurrent.futures
 import time
 from functools import lru_cache
-import psutil
 from tqdm import tqdm
 
 

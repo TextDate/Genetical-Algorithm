@@ -1,12 +1,8 @@
 import os
 import argparse
-import cProfile
-import pstats
-
 from genetic_algorithm import GeneticAlgorithm
-from zstd_compressor import Compressor as zstdCompressor
-from ac2_compressor import Compressor as ac2Compressor
-from plot_maker import EvolutionVisualizer
+from Compressors.zstd_compressor import Compressor as zstdCompressor
+from Compressors.ac2_compressor import Compressor as ac2Compressor
 
 
 def main():
