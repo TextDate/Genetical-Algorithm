@@ -2,6 +2,7 @@ import random
 import csv
 import os
 import concurrent.futures
+import sys
 import time
 from functools import lru_cache
 from tqdm import tqdm
@@ -19,8 +20,6 @@ class GeneticAlgorithm:
         self.crossover_rate = crossover_rate  # Probability of crossover
         self.output_dir = output_dir  # Output directory for CSV files
         self.max_threads = max_threads
-
-        #self.num_workers = psutil.cpu_count(logical=False) // 2
 
         self.mutation_counts = []  # Track mutations per generation
         self.crossover_counts = []  # Track crossovers per generation
@@ -127,8 +126,6 @@ class GeneticAlgorithm:
             swapped = False
 
             for gene_index in range(len(parent1[0])):  # Iterate over each gene
-                #print("Parent1:", parent1)
-                #print("Parent2", parent2)
 
                 parent1_gene = parent1[0][gene_index]
                 parent2_gene = parent2[0][gene_index]
@@ -167,8 +164,6 @@ class GeneticAlgorithm:
                 child1_gene_code.append(child1_gene)
                 child2_gene_code.append(child2_gene)
 
-            #print("Child 1: ", child1_gene_code)
-            #print("Child 2: ", child2_gene_code)
             child1 = (tuple(child1_gene_code), self._create_individual_name(generation))
             child2 = (tuple(child2_gene_code), self._create_individual_name(generation))
 
@@ -178,8 +173,6 @@ class GeneticAlgorithm:
 
     def _mutate(self, individual, generation):
         """Applies mutation to an individual."""
-        # Gene Code (each in individual can have n models) and name are the elements of the tuple
-        #print("Individual to mutate:", individual)
         gene_code, name = individual
         mutated_gene_code = []
         gene_code_mutated = False
@@ -263,6 +256,7 @@ class GeneticAlgorithm:
         """Runs the genetic algorithm."""
         init_time = time.time()
         print(f"Initial Generation")
+        sys.stdout.flush()
         # The initial generation will never have mutation or crossovers
         self.mutation_counts.append(0)
         self.crossover_counts.append(0)
@@ -274,6 +268,7 @@ class GeneticAlgorithm:
             zip(self.population, self._evaluate_population_in_parallel(self.population))
         ]
         print(f"Took {time.time() - fit_time} to evaluate Initial Generation")
+        sys.stdout.flush()
 
         # Sort the population by fitness, best to worst
         self.population = sorted(population_with_fitness, key=lambda x: x[1], reverse=True)
@@ -285,9 +280,11 @@ class GeneticAlgorithm:
         best_individual = self.population[0][0]
         decoded_best_individual = self._decode_individual(best_individual)
         print(f"Best individual from Initial Generation: {decoded_best_individual}")
+        sys.stdout.flush()
         best_fitness = self.population[0][1]
         print(f"Fitness: {best_fitness}")
         print(f"Total time took: {time.time() - init_time}")
+        sys.stdout.flush()
         # Delete the temporary files created by the initial generation
         self.compressor.erase_temp_files()
 
@@ -295,6 +292,7 @@ class GeneticAlgorithm:
         for generation in range(1, self.generations):
             init_time = time.time()
             print(f"Generation {generation + 1}")
+            sys.stdout.flush()
             # Reset mutation and crossover for each generation
             self.mutation_counts.append(0)
             self.crossover_counts.append(0)
@@ -312,11 +310,13 @@ class GeneticAlgorithm:
                 # Adding the new individuals to the offspring list
                 offspring.extend([child1, child2])
             print(f"Took {time.time() - offspring_gen_time} to create offspring from Generation {generation}")
+            sys.stdout.flush()
 
             # Select the next generation
             fit_time = time.time()
             self._select_next_generation(offspring)
             print(f"Took {time.time() - fit_time} to evaluate Generation {generation}")
+            sys.stdout.flush()
 
             # Save the generation to a CSV file
             self._save_generation_to_csv(generation + 1)
@@ -325,9 +325,11 @@ class GeneticAlgorithm:
             best_individual = self.population[0][0]
             decoded_best_individual = self._decode_individual(best_individual)
             print(f"Best individual: {decoded_best_individual}")
+            sys.stdout.flush()
             best_fitness = self.population[0][1]
             print(f"Fitness: {best_fitness}")
             print(f"Total time took: {time.time() - init_time}")
+            sys.stdout.flush()
 
             # Erase the temporary files created this generation
             self.compressor.erase_temp_files()
