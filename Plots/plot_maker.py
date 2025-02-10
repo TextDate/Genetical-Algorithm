@@ -1,3 +1,4 @@
+import sys
 import pandas as pd
 import matplotlib.pyplot as plt
 import os
@@ -10,107 +11,111 @@ class EvolutionVisualizer:
         """
         self.csv_directory = csv_directory
         self.data = self._load_all_csv()
+        self.available_params = self._identify_parameters()  # Dynamically detect parameters
+        self.compressor = csv_directory.split("_")[0]
+        
+        if not os.path.exists(self.compressor):
+            os.makedirs(self.compressor)
 
     def _load_all_csv(self):
         """
-        Load all CSV files from the specified directory and store them in a list of DataFrames.
-        Each DataFrame corresponds to a generation.
+        Load all CSV files from the specified directory and store them in a dictionary.
+        The key is the generation number, and the value is the corresponding DataFrame.
         """
-        data = []
-        csv_files = sorted([f for f in os.listdir(self.csv_directory) if f.endswith('.csv')])
-        for file in csv_files:
-            if file.startswith('generation'):
-                file_path = os.path.join(self.csv_directory, file)
-                df = pd.read_csv(file_path)
-                data.append(df)
-        return data
+        data = {}
 
-    def plot_parameter_evolution(self):
+        # Get all generation CSV files and extract generation numbers
+        csv_files = [f for f in os.listdir(self.csv_directory) if f.startswith('generation') and f.endswith('.csv')]
+
+        for file in csv_files:
+            file_path = os.path.join(self.csv_directory, file)
+
+            # Extract generation number from the filename
+            generation_number = int(file.split('_')[1].split('.')[0])
+
+            # Load CSV and store in dictionary
+            data[generation_number] = pd.read_csv(file_path)
+
+        # Ensure dictionary is sorted by generation number
+        return dict(sorted(data.items()))
+
+    def _identify_parameters(self):
         """
-        Plot the evolution of each Zstd parameter across generations.
+        Dynamically detect available parameters in the first generation's DataFrame.
+        Works for any compressor (Zstd, LZMA, Brotli, etc.).
         """
         if not self.data:
             print("No CSV files found to visualize.")
-            return
+            return []
 
-        # Extract parameter names that correspond to Zstd parameters from the first file
-        zstd_params = ['level', 'window_log', 'chain_log', 'hash_log', 'search_log', 'min_match', 'target_length',
-                       'strategy']
-
-        # Plot evolution of each parameter
-        for param in zstd_params:
-            plt.figure(figsize=(10, 6))
-            for i, df in enumerate(self.data):
-                plt.scatter([i] * len(df), df[param], alpha=0.5, label=f"Gen {i + 1}" if i == 0 else "")
-
-            plt.title(f'Evolution of {param} Across Generations')
-            plt.xlabel('Generation')
-            plt.ylabel(f'{param} Value')
-            plt.grid(True)
-            plt.show()
+        df = next(iter(self.data.values()))  # Get the first DataFrame
+        excluded_columns = ["Generation", "Rank", "Fitness", "Individual"]  # Exclude non-parameter columns
+        return [col for col in df.columns if col not in excluded_columns]
 
     def plot_best_individuals(self):
         """
         Plot the best individual's fitness across generations.
+        Ensures that each generation has a valid best individual.
         """
         best_fitness = []
-        generations = list(range(1, len(self.data) + 1))
+        best_individuals = []
+        generations = list(self.data.keys())
 
-        for df in self.data:
-            best_fitness.append(df['Fitness'].max())  # Assuming higher fitness is better
+        for gen, df in self.data.items():
+            df["Fitness"] = pd.to_numeric(df["Fitness"], errors="coerce")  # Convert to numeric
+            df = df.dropna(subset=["Fitness"]).sort_values(by="Fitness", ascending=False)
+
+            best_fitness.append(df.iloc[0]["Fitness"])
+            best_individuals.append(df.iloc[0]["Individual"])
+
+            print(f"Gen {gen}: Best Individual = {df.iloc[0]['Individual']}, Fitness = {df.iloc[0]['Fitness']}")
+
+        # Save log of best individuals
+        log_file = os.path.join(self.csv_directory, "best_individuals_log.txt")
+        with open(log_file, "w") as f:
+            for gen, ind, fit in zip(generations, best_individuals, best_fitness):
+                f.write(f"Generation {gen}: {ind} - Fitness: {fit}\n")
+
+        valid_generations = [gen for gen, fit in zip(generations, best_fitness) if fit is not None]
+        valid_fitness = [fit for fit in best_fitness if fit is not None]
 
         plt.figure(figsize=(10, 6))
-        plt.plot(generations, best_fitness, marker='o', linestyle='-', color='b', label='Best Fitness')
-        plt.title('Best Fitness Across Generations')
-        plt.xlabel('Generation')
-        plt.ylabel('Best Fitness')
+        plt.plot(valid_generations, valid_fitness, marker="o", linestyle="-", color="b", label="Best Fitness")
+        plt.title("Best Fitness Across Generations")
+        plt.xlabel("Generation")
+        plt.ylabel("Best Fitness")
         plt.grid(True)
-        plt.show()
+        plt.savefig(os.path.join(self.compressor, "best_fitness.png"))
+        plt.close()
+
+
 
     def plot_average_fitness(self):
         """
         Plot the average fitness across generations.
         """
         avg_fitness = []
-        generations = list(range(1, len(self.data) + 1))
+        generations = list(self.data.keys())
 
-        for df in self.data:
-            avg_fitness.append(df['Fitness'].mean())  # Calculate the mean fitness for the generation
+        for gen, df in self.data.items():
 
-        plt.figure(figsize=(10, 6))
-        plt.plot(generations, avg_fitness, marker='o', linestyle='-', color='g', label='Average Fitness')
-        plt.title('Average Fitness Across Generations')
-        plt.xlabel('Generation')
-        plt.ylabel('Average Fitness')
-        plt.grid(True)
-        plt.show()
+            df["Fitness"] = pd.to_numeric(df["Fitness"], errors="coerce")
+            avg_fitness.append(df["Fitness"].mean())
 
-    def plot_mutation_crossover(self):
-        """Plot the number of mutations and crossovers per generation."""
-        # Load mutation and crossover counts from CSV
-        filename = os.path.join(self.csv_directory, "mutation_crossover_counts.csv")
-        if not os.path.isfile(filename):
-            print(f"No mutation and crossover CSV found at {filename}")
-            return
-
-        df = pd.read_csv(filename)
-        generations = df['Generation']
-        mutations = df['Mutations']
-        crossovers = df['Crossovers']
+        valid_generations = [gen for gen, fit in zip(generations, avg_fitness) if fit is not None]
+        valid_fitness = [fit for fit in avg_fitness if fit is not None]
 
         plt.figure(figsize=(10, 6))
-        plt.plot(generations, mutations, marker='o', label="Mutations", color='red')
-        plt.plot(generations, crossovers, marker='o', label="Crossovers", color='blue')
+        plt.plot(valid_generations, valid_fitness, marker="o", linestyle="-", color="g", label="Average Fitness")
+        plt.title("Average Fitness Across Generations")
         plt.xlabel("Generation")
-        plt.ylabel("Count")
-        plt.title("Mutations and Crossovers per Generation")
-        plt.legend()
+        plt.ylabel("Average Fitness")
         plt.grid(True)
-        plt.show()
+        plt.savefig(os.path.join(self.compressor, "average_fitness.png"))
+        plt.close()
 
 
-#visualiser = EvolutionVisualizer("ga_results_all_files")
-#visualiser.plot_parameter_evolution()
-#visualiser.plot_best_individuals()
-#visualiser.plot_average_fitness()
-#visualiser.plot_mutation_crossover()
+# Example usage
+visualiser = EvolutionVisualizer("2000_3136_ga_results/Brotli_ga_results")  # Change to your actual results directory
+visualiser.plot_best_individuals()
+visualiser.plot_average_fitness()

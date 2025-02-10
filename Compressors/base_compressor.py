@@ -10,6 +10,7 @@ class BaseCompressor:
         self.reference_file_path = reference_file_path  # Reference file path (optional)
         self.temp = temp  # Temporary storage folder
         self.errors = 0
+        self.nr_models = 1
 
         # Create temp directory if it doesn't exist
         if not os.path.exists(self.temp):

@@ -10,7 +10,7 @@ from tqdm import tqdm
 
 class GeneticAlgorithm:
     def __init__(self, param_values, compressor, population_size, generations, mutation_rate, crossover_rate,
-                 output_dir="ga_results_all_files", max_threads=8):
+                 output_dir="ga_results", max_threads=8):
         self.param_values = param_values  # Dictionary of parameter names to their valid values
         self.compressor = compressor  # Compressor the GA is trying to optimize
         self.population_size = population_size  # Population size
@@ -267,8 +267,6 @@ class GeneticAlgorithm:
             (individual, fitness) for individual, fitness in
             zip(self.population, self._evaluate_population_in_parallel(self.population))
         ]
-        print(f"Took {time.time() - fit_time} to evaluate Initial Generation")
-        sys.stdout.flush()
 
         # Sort the population by fitness, best to worst
         self.population = sorted(population_with_fitness, key=lambda x: x[1], reverse=True)
@@ -284,9 +282,8 @@ class GeneticAlgorithm:
         best_fitness = self.population[0][1]
         print(f"Fitness: {best_fitness}")
         print(f"Total time took: {time.time() - init_time}")
+        print("-" * 100)
         sys.stdout.flush()
-        # Delete the temporary files created by the initial generation
-        self.compressor.erase_temp_files()
 
         # Start the process for the next generations
         for generation in range(1, self.generations):
@@ -309,14 +306,10 @@ class GeneticAlgorithm:
                 child2 = self._mutate(child2, generation + 1)
                 # Adding the new individuals to the offspring list
                 offspring.extend([child1, child2])
-            print(f"Took {time.time() - offspring_gen_time} to create offspring from Generation {generation}")
-            sys.stdout.flush()
 
             # Select the next generation
             fit_time = time.time()
             self._select_next_generation(offspring)
-            print(f"Took {time.time() - fit_time} to evaluate Generation {generation}")
-            sys.stdout.flush()
 
             # Save the generation to a CSV file
             self._save_generation_to_csv(generation + 1)
@@ -329,9 +322,9 @@ class GeneticAlgorithm:
             best_fitness = self.population[0][1]
             print(f"Fitness: {best_fitness}")
             print(f"Total time took: {time.time() - init_time}")
+            print("-" * 100)
             sys.stdout.flush()
 
-            # Erase the temporary files created this generation
             self.compressor.erase_temp_files()
 
         return decoded_best_individual, best_fitness

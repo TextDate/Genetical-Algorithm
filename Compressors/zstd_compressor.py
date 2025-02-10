@@ -1,7 +1,7 @@
 import zstandard as zstd
 import os
 import sys
-from base_compressor import BaseCompressor  # Import BaseCompressor
+from Compressors.base_compressor import BaseCompressor  # Import BaseCompressor
 
 
 class ZstdCompressor(BaseCompressor):
@@ -34,8 +34,7 @@ class ZstdCompressor(BaseCompressor):
 
     def _run_compression_with_params(self, params, name):
         """Compress a file using Zstd and compute compression ratio."""
-        if not os.path.exists(self.temp):
-            os.makedirs(self.temp)
+
 
         cctx = self.create_command(params=params[0])
         if cctx is None:
@@ -48,8 +47,5 @@ class ZstdCompressor(BaseCompressor):
 
         # Calculate compression ratio
         compression_ratio = self.compute_compression_ratio(self.input_file_path, compressed_file_path)
-
-        # Cleanup compressed file
-        os.remove(compressed_file_path)
 
         return compression_ratio

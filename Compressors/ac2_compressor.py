@@ -1,7 +1,7 @@
 import os
 import shutil
 import sys
-from base_compressor import BaseCompressor
+from Compressors.base_compressor import BaseCompressor
 
 
 class AC2Compressor(BaseCompressor):

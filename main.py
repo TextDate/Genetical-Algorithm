@@ -4,6 +4,8 @@ import json
 from genetic_algorithm import GeneticAlgorithm
 from Compressors.zstd_compressor import ZstdCompressor
 from Compressors.ac2_compressor import AC2Compressor
+from Compressors.lzma_compressor import LzmaCompressor
+from Compressors.brotli_compressor import BrotliCompressor
 
 
 def load_parameters(file_path):
@@ -20,8 +22,8 @@ def main():
     parser = argparse.ArgumentParser(description='Run a genetic algorithm for Zstd or AC2 compression.')
 
     # Compressor Choice
-    parser.add_argument('--compressor', type=str, choices=['zstd', 'ac2'], required=True,
-                        help="Choose the compressor: 'zstd' or 'ac2'")
+    parser.add_argument('--compressor', type=str, choices=['zstd', 'ac2', 'lzma', 'brotli'], required=True,
+                        help="Choose the compressor: 'zstd', 'ac2', 'lzma', or 'brotli'")
 
     # Parameters file path
     parser.add_argument('--param_file', '-p', type=str, required=True, help="JSON file containing compressor parameter ranges")
@@ -34,8 +36,8 @@ def main():
     parser.add_argument('--input', '-i', type=str, required=True, help="File to compress")
 
     # Directories to be created
-    parser.add_argument('--output_dir', '-o', type=str, default="ga_results_all_files", help="Folder to store the CSV results (default: 'ga_results_all_files')")
-    parser.add_argument('--temp_dir', '-t', type=str, required=False, help="Folder to store temporary files")
+    parser.add_argument('--output_dir', '-o', type=str, default="ga_results", help="Folder to store the CSV results (default: 'ga_results_all_files')")
+    parser.add_argument('--temp_dir', '-t', type=str, default="temp", help="Folder to store temporary files")
 
     # Multithreading
     parser.add_argument('--max_threads', '-mt', type=int, default=16, help="Maximum number of threads to use.")
@@ -55,6 +57,14 @@ def main():
     if args.compressor == 'zstd':
         param_ranges = parameters.get('zstd', {})
         compressor = ZstdCompressor(args.input, args.reference, temp=args.temp_dir)
+    elif args.compressor == 'lzma':
+        param_ranges = parameters.get('lzma', {})
+        compressor = LzmaCompressor(args.input, temp=args.temp_dir)
+    elif args.compressor == 'brotli':
+        param_ranges = parameters.get('brotli', {})
+        compressor = BrotliCompressor(args.input, temp=args.temp_dir or "temp")
+
+
     else:
         if not args.reference:
             raise ValueError("A reference file must be provided when using the AC2 compressor.")
