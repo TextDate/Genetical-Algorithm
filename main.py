@@ -22,14 +22,14 @@ def main():
     parser = argparse.ArgumentParser(description='Run a genetic algorithm for Zstd or AC2 compression.')
 
     # Compressor Choice
-    parser.add_argument('--compressor', type=str, choices=['zstd', 'ac2', 'lzma', 'brotli'], required=True,
+    parser.add_argument('--compressor',  '-c',type=str, choices=['zstd', 'ac2', 'lzma', 'brotli'], required=True,
                         help="Choose the compressor: 'zstd', 'ac2', 'lzma', or 'brotli'")
 
     # Parameters file path
     parser.add_argument('--param_file', '-p', type=str, required=True, help="JSON file containing compressor parameter ranges")
 
     # AC2 specific parameters
-    parser.add_argument('--models', type=int, default=1, help="Number of models to use when using AC2 compressor (default: 1)")
+    parser.add_argument('--models', '-m', type=int, default=1, help="Number of models to use when using AC2 compressor (default: 1)")
     parser.add_argument('--reference', '-r', type=str, required=False, help="Reference file (required for AC2 compressor)")
 
     # File to compress
@@ -43,10 +43,10 @@ def main():
     parser.add_argument('--max_threads', '-mt', type=int, default=16, help="Maximum number of threads to use.")
 
     # GA parameters
-    parser.add_argument('--generations', type=int, default=100, help="Number of generations (default: 100)")
-    parser.add_argument('--population_size', type=int, default=100, help="Population size (default: 100)")
-    parser.add_argument('--mutation_rate', type=float, default=0.01, help="Mutation rate (default: 0.01)")
-    parser.add_argument('--crossover_rate', type=float, default=0.5, help="Crossover rate (default: 0.5)")
+    parser.add_argument('--generations', '-g',type=int, default=100, help="Number of generations (default: 100)")
+    parser.add_argument('--population_size', '-ps',type=int, default=100, help="Population size (default: 100)")
+    parser.add_argument('--mutation_rate', '-mr',type=float, default=0.01, help="Mutation rate (default: 0.01)")
+    parser.add_argument('--crossover_rate', '-mcr',type=float, default=0.8, help="Crossover rate (default: 0.5)")
 
     args = parser.parse_args()
 
