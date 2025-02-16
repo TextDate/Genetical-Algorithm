@@ -256,6 +256,8 @@ class GeneticAlgorithm:
         """Runs the genetic algorithm."""
         init_time = time.time()
         print(f"Initial Generation")
+        self.compressor.erase_temp_files()
+        time.sleep(1)  # Short delay to ensure the OS processes file removal
         sys.stdout.flush()
         # The initial generation will never have mutation or crossovers
         self.mutation_counts.append(0)
@@ -293,6 +295,10 @@ class GeneticAlgorithm:
             # Reset mutation and crossover for each generation
             self.mutation_counts.append(0)
             self.crossover_counts.append(0)
+            
+            # Ensure temp files are completely erased before proceeding
+            self.compressor.erase_temp_files()
+            time.sleep(1)  # Short delay to ensure the OS processes file removal
 
             # Generate offspring
             offspring = []
@@ -325,6 +331,6 @@ class GeneticAlgorithm:
             print("-" * 100)
             sys.stdout.flush()
 
-            self.compressor.erase_temp_files()
-
+        self.compressor.erase_temp_files()
+        time.sleep(1)  # Short delay to ensure the OS processes file removal
         return decoded_best_individual, best_fitness

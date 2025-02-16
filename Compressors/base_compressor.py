@@ -2,6 +2,7 @@ import os
 import subprocess
 import sys
 import time
+import shutil
 
 
 class BaseCompressor:
@@ -21,9 +22,15 @@ class BaseCompressor:
         return self.errors
 
     def erase_temp_files(self):
-        """Remove all temporary files from the temp directory."""
-        for filename in os.listdir(self.temp):
-            os.remove(os.path.join(self.temp, filename))
+        """Ensure all temporary files are deleted before proceeding."""
+        if os.path.exists(self.temp):
+            # Remove and recreate the temp directory to ensure all files are deleted
+            try:
+                shutil.rmtree(self.temp)  # Remove the entire temp directory
+                os.makedirs(self.temp)  # Recreate the directory
+                print("Temp files successfully erased.")
+            except Exception as e:
+                print(f"Error while deleting temp files: {e}")
 
     def run_command(self, command):
         """Execute a system command safely and handle errors."""
