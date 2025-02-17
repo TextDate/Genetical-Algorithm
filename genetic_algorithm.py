@@ -255,6 +255,7 @@ class GeneticAlgorithm:
     def run(self):
         """Runs the genetic algorithm."""
         init_time = time.time()
+        print("-" * 100)
         print(f"Initial Generation")
         self.compressor.erase_temp_files()
         time.sleep(1)  # Short delay to ensure the OS processes file removal
