@@ -5,8 +5,8 @@ from Compressors.base_compressor import BaseCompressor  # Import BaseCompressor
 
 
 class ZstdCompressor(BaseCompressor):
-    def __init__(self, input_file_path, reference_file_path, temp="temp"):
-        super().__init__(input_file_path, reference_file_path, temp)
+    def __init__(self, input_file_path, temp="temp"):
+        super().__init__(input_file_path=input_file_path, temp=temp)
 
     def create_command(self, params):
         """Create a Zstd compressor with custom parameters."""

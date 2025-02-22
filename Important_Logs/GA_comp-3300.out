@@ -1,0 +1,1016 @@
+Job Information for Job ID: 3300 from paulojnpinto02
+------------ ------------
+Account: students
+CPUs per Node: 32
+RAM: 150G
+Partition: cpu
+QOS: students-qos
+Start Time: 2025-02-10 13:40:25 WET
+Running On Node: cpu-srv-03
+------------ ------------
+Initial Generation
+Best individual from Initial Generation: ({'ctx': 5, 'den': 10, 'hash': 128, 'gamma': 0.7, 'mutations': 5, 'den_mut': 1, 'gamma_mut': 0.99},)
+Fitness: 4.375419588934532
+Total time took: 99.53585958480835
+----------------------------------------------------------------------------------------------------
+Generation 2
+Best individual: ({'ctx': 5, 'den': 10, 'hash': 128, 'gamma': 0.7, 'mutations': 5, 'den_mut': 9, 'gamma_mut': 0.99},)
+Fitness: 4.3755197983331335
+Total time took: 85.07002377510071
+----------------------------------------------------------------------------------------------------
+Generation 3
+Best individual: ({'ctx': 5, 'den': 10, 'hash': 128, 'gamma': 0.7, 'mutations': 5, 'den_mut': 9, 'gamma_mut': 0.99},)
+Fitness: 4.3755197983331335
+Total time took: 86.65386128425598
+----------------------------------------------------------------------------------------------------
+Generation 4
+Best individual: ({'ctx': 5, 'den': 20, 'hash': 0, 'gamma': 0.6, 'mutations': 5, 'den_mut': 5, 'gamma_mut': 0.99},)
+Fitness: 4.378815903772413
+Total time took: 87.17287302017212
+----------------------------------------------------------------------------------------------------
+Generation 5
+Best individual: ({'ctx': 5, 'den': 20, 'hash': 0, 'gamma': 0.6, 'mutations': 5, 'den_mut': 5, 'gamma_mut': 0.99},)
+Fitness: 4.378815903772413
+Total time took: 88.44761395454407
+----------------------------------------------------------------------------------------------------
+Generation 6
+Best individual: ({'ctx': 5, 'den': 500, 'hash': 0, 'gamma': 0.95, 'mutations': 1, 'den_mut': 5, 'gamma_mut': 0.99},)
+Fitness: 4.379190623364418
+Total time took: 91.51650166511536
+----------------------------------------------------------------------------------------------------
+Generation 7
+Best individual: ({'ctx': 5, 'den': 200, 'hash': 128, 'gamma': 0.95, 'mutations': 1, 'den_mut': 5, 'gamma_mut': 0.99},)
+Fitness: 4.379190623364418
+Total time took: 91.50759863853455
+----------------------------------------------------------------------------------------------------
+Generation 8
+Best individual: ({'ctx': 5, 'den': 500, 'hash': 192, 'gamma': 0.99, 'mutations': 3, 'den_mut': 9, 'gamma_mut': 0.9},)
+Fitness: 4.379204007393139
+Total time took: 94.67868685722351
+----------------------------------------------------------------------------------------------------
+Generation 9
+Best individual: ({'ctx': 5, 'den': 100, 'hash': 192, 'gamma': 0.99, 'mutations': 4, 'den_mut': 9, 'gamma_mut': 0.9},)
+Fitness: 4.379204007393139
+Total time took: 93.06741976737976
+----------------------------------------------------------------------------------------------------
+Generation 10
+Best individual: ({'ctx': 5, 'den': 1, 'hash': 192, 'gamma': 0.99, 'mutations': 5, 'den_mut': 9, 'gamma_mut': 0.9},)
+Fitness: 4.379204007393139
+Total time took: 91.16771721839905
+----------------------------------------------------------------------------------------------------
+Generation 11
+Best individual: ({'ctx': 5, 'den': 2, 'hash': 192, 'gamma': 0.99, 'mutations': 5, 'den_mut': 9, 'gamma_mut': 0.9},)
+Fitness: 4.379204007393139
+Total time took: 92.55824589729309
+----------------------------------------------------------------------------------------------------
+Generation 12
+Best individual: ({'ctx': 5, 'den': 20, 'hash': 192, 'gamma': 0.99, 'mutations': 4, 'den_mut': 9, 'gamma_mut': 0.9},)
+Fitness: 4.379204007393139
+Total time took: 90.68904852867126
+----------------------------------------------------------------------------------------------------
+Generation 13
+Best individual: ({'ctx': 5, 'den': 20, 'hash': 255, 'gamma': 0.2, 'mutations': 1, 'den_mut': 9, 'gamma_mut': 0.95},)
+Fitness: 4.379237467822866
+Total time took: 90.6700050830841
+----------------------------------------------------------------------------------------------------
+Generation 14
+Best individual: ({'ctx': 5, 'den': 20, 'hash': 16, 'gamma': 0.95, 'mutations': 1, 'den_mut': 3, 'gamma_mut': 0.99},)
+Fitness: 4.379321121134277
+Total time took: 91.15846848487854
+----------------------------------------------------------------------------------------------------
+Generation 15
+Best individual: ({'ctx': 5, 'den': 20, 'hash': 16, 'gamma': 0.95, 'mutations': 1, 'den_mut': 6, 'gamma_mut': 0.95},)
+Fitness: 4.379327813537254
+Total time took: 90.55856800079346
+----------------------------------------------------------------------------------------------------
+Generation 16
+Best individual: ({'ctx': 5, 'den': 20, 'hash': 64, 'gamma': 0.95, 'mutations': 1, 'den_mut': 4, 'gamma_mut': 0.95},)
+Fitness: 4.379327813537254
+Total time took: 92.23095893859863
+----------------------------------------------------------------------------------------------------
+Generation 17
+Best individual: ({'ctx': 5, 'den': 20, 'hash': 128, 'gamma': 0.95, 'mutations': 1, 'den_mut': 9, 'gamma_mut': 0.95},)
+Fitness: 4.379327813537254
+Total time took: 91.5756425857544
+----------------------------------------------------------------------------------------------------
+Generation 18
+Best individual: ({'ctx': 5, 'den': 20, 'hash': 192, 'gamma': 0.95, 'mutations': 1, 'den_mut': 2, 'gamma_mut': 0.95},)
+Fitness: 4.379327813537254
+Total time took: 91.29250884056091
+----------------------------------------------------------------------------------------------------
+Generation 19
+Best individual: ({'ctx': 5, 'den': 20, 'hash': 255, 'gamma': 0.95, 'mutations': 1, 'den_mut': 2, 'gamma_mut': 0.95},)
+Fitness: 4.379327813537254
+Total time took: 92.0020809173584
+----------------------------------------------------------------------------------------------------
+Generation 20
+Best individual: ({'ctx': 5, 'den': 20, 'hash': 255, 'gamma': 0.95, 'mutations': 1, 'den_mut': 3, 'gamma_mut': 0.9},)
+Fitness: 4.379331159746413
+Total time took: 91.62519478797913
+----------------------------------------------------------------------------------------------------
+Generation 21
+Best individual: ({'ctx': 5, 'den': 20, 'hash': 0, 'gamma': 0.95, 'mutations': 1, 'den_mut': 5, 'gamma_mut': 0.99},)
+Fitness: 4.379337852180072
+Total time took: 91.32206153869629
+----------------------------------------------------------------------------------------------------
+Generation 22
+Best individual: ({'ctx': 5, 'den': 20, 'hash': 16, 'gamma': 0.95, 'mutations': 1, 'den_mut': 7, 'gamma_mut': 0.99},)
+Fitness: 4.379337852180072
+Total time took: 92.60552930831909
+----------------------------------------------------------------------------------------------------
+Generation 23
+Best individual: ({'ctx': 5, 'den': 20, 'hash': 32, 'gamma': 0.95, 'mutations': 1, 'den_mut': 9, 'gamma_mut': 0.99},)
+Fitness: 4.379337852180072
+Total time took: 94.26535987854004
+----------------------------------------------------------------------------------------------------
+Generation 24
+Best individual: ({'ctx': 5, 'den': 20, 'hash': 0, 'gamma': 0.95, 'mutations': 1, 'den_mut': 2, 'gamma_mut': 0.99},)
+Fitness: 4.379337852180072
+Total time took: 93.50279355049133
+----------------------------------------------------------------------------------------------------
+Generation 25
+Best individual: ({'ctx': 5, 'den': 20, 'hash': 16, 'gamma': 0.95, 'mutations': 1, 'den_mut': 2, 'gamma_mut': 0.99},)
+Fitness: 4.379337852180072
+Total time took: 93.32295370101929
+----------------------------------------------------------------------------------------------------
+Generation 26
+Best individual: ({'ctx': 5, 'den': 20, 'hash': 16, 'gamma': 0.95, 'mutations': 1, 'den_mut': 7, 'gamma_mut': 0.99},)
+Fitness: 4.379337852180072
+Total time took: 93.16702127456665
+----------------------------------------------------------------------------------------------------
+Generation 27
+Best individual: ({'ctx': 5, 'den': 20, 'hash': 128, 'gamma': 0.95, 'mutations': 1, 'den_mut': 5, 'gamma_mut': 0.99},)
+Fitness: 4.379337852180072
+Total time took: 92.77579712867737
+----------------------------------------------------------------------------------------------------
+Generation 28
+Best individual: ({'ctx': 5, 'den': 20, 'hash': 128, 'gamma': 0.95, 'mutations': 1, 'den_mut': 5, 'gamma_mut': 0.99},)
+Fitness: 4.379337852180072
+Total time took: 91.72363209724426
+----------------------------------------------------------------------------------------------------
+Generation 29
+Best individual: ({'ctx': 5, 'den': 20, 'hash': 64, 'gamma': 0.95, 'mutations': 1, 'den_mut': 7, 'gamma_mut': 0.99},)
+Fitness: 4.379337852180072
+Total time took: 95.49013113975525
+----------------------------------------------------------------------------------------------------
+Generation 30
+Best individual: ({'ctx': 5, 'den': 20, 'hash': 32, 'gamma': 0.95, 'mutations': 1, 'den_mut': 7, 'gamma_mut': 0.99},)
+Fitness: 4.379337852180072
+Total time took: 92.15293312072754
+----------------------------------------------------------------------------------------------------
+Generation 31
+Best individual: ({'ctx': 5, 'den': 20, 'hash': 255, 'gamma': 0.95, 'mutations': 1, 'den_mut': 10, 'gamma_mut': 0.99},)
+Fitness: 4.379337852180072
+Total time took: 93.619699716568
+----------------------------------------------------------------------------------------------------
+Generation 32
+Best individual: ({'ctx': 5, 'den': 20, 'hash': 64, 'gamma': 0.95, 'mutations': 1, 'den_mut': 10, 'gamma_mut': 0.99},)
+Fitness: 4.379337852180072
+Total time took: 93.73154973983765
+----------------------------------------------------------------------------------------------------
+Generation 33
+Best individual: ({'ctx': 5, 'den': 20, 'hash': 16, 'gamma': 0.95, 'mutations': 1, 'den_mut': 3, 'gamma_mut': 0.99},)
+Fitness: 4.379337852180072
+Total time took: 92.11371326446533
+----------------------------------------------------------------------------------------------------
+Generation 34
+Best individual: ({'ctx': 5, 'den': 20, 'hash': 0, 'gamma': 0.95, 'mutations': 1, 'den_mut': 2, 'gamma_mut': 0.99},)
+Fitness: 4.379337852180072
+Total time took: 92.4328134059906
+----------------------------------------------------------------------------------------------------
+Generation 35
+Best individual: ({'ctx': 5, 'den': 20, 'hash': 192, 'gamma': 0.95, 'mutations': 1, 'den_mut': 3, 'gamma_mut': 0.99},)
+Fitness: 4.379337852180072
+Total time took: 92.98592162132263
+----------------------------------------------------------------------------------------------------
+Generation 36
+Best individual: ({'ctx': 5, 'den': 20, 'hash': 0, 'gamma': 0.95, 'mutations': 1, 'den_mut': 10, 'gamma_mut': 0.99},)
+Fitness: 4.379337852180072
+Total time took: 89.68055176734924
+----------------------------------------------------------------------------------------------------
+Generation 37
+Best individual: ({'ctx': 5, 'den': 20, 'hash': 32, 'gamma': 0.95, 'mutations': 1, 'den_mut': 2, 'gamma_mut': 0.99},)
+Fitness: 4.379337852180072
+Total time took: 93.5383665561676
+----------------------------------------------------------------------------------------------------
+Generation 38
+Best individual: ({'ctx': 5, 'den': 20, 'hash': 255, 'gamma': 0.95, 'mutations': 1, 'den_mut': 1, 'gamma_mut': 0.99},)
+Fitness: 4.379337852180072
+Total time took: 95.07352328300476
+----------------------------------------------------------------------------------------------------
+Generation 39
+Best individual: ({'ctx': 5, 'den': 20, 'hash': 192, 'gamma': 0.95, 'mutations': 1, 'den_mut': 7, 'gamma_mut': 0.99},)
+Fitness: 4.379337852180072
+Total time took: 93.24175930023193
+----------------------------------------------------------------------------------------------------
+Generation 40
+Best individual: ({'ctx': 5, 'den': 20, 'hash': 0, 'gamma': 0.95, 'mutations': 1, 'den_mut': 10, 'gamma_mut': 0.99},)
+Fitness: 4.379337852180072
+Total time took: 93.58022499084473
+----------------------------------------------------------------------------------------------------
+Generation 41
+Best individual: ({'ctx': 5, 'den': 20, 'hash': 192, 'gamma': 0.95, 'mutations': 1, 'den_mut': 1, 'gamma_mut': 0.99},)
+Fitness: 4.379337852180072
+Total time took: 91.77072834968567
+----------------------------------------------------------------------------------------------------
+Generation 42
+Best individual: ({'ctx': 5, 'den': 20, 'hash': 32, 'gamma': 0.95, 'mutations': 1, 'den_mut': 2, 'gamma_mut': 0.99},)
+Fitness: 4.379337852180072
+Total time took: 94.16375589370728
+----------------------------------------------------------------------------------------------------
+Generation 43
+Best individual: ({'ctx': 5, 'den': 20, 'hash': 64, 'gamma': 0.95, 'mutations': 1, 'den_mut': 2, 'gamma_mut': 0.99},)
+Fitness: 4.379337852180072
+Total time took: 92.82815790176392
+----------------------------------------------------------------------------------------------------
+Generation 44
+Best individual: ({'ctx': 5, 'den': 20, 'hash': 192, 'gamma': 0.95, 'mutations': 1, 'den_mut': 5, 'gamma_mut': 0.99},)
+Fitness: 4.379337852180072
+Total time took: 91.66354823112488
+----------------------------------------------------------------------------------------------------
+Generation 45
+Best individual: ({'ctx': 5, 'den': 20, 'hash': 192, 'gamma': 0.95, 'mutations': 1, 'den_mut': 8, 'gamma_mut': 0.99},)
+Fitness: 4.379337852180072
+Total time took: 92.34587621688843
+----------------------------------------------------------------------------------------------------
+Generation 46
+Best individual: ({'ctx': 5, 'den': 20, 'hash': 32, 'gamma': 0.95, 'mutations': 1, 'den_mut': 4, 'gamma_mut': 0.99},)
+Fitness: 4.379337852180072
+Total time took: 92.43257522583008
+----------------------------------------------------------------------------------------------------
+Generation 47
+Best individual: ({'ctx': 5, 'den': 20, 'hash': 128, 'gamma': 0.95, 'mutations': 1, 'den_mut': 2, 'gamma_mut': 0.99},)
+Fitness: 4.379337852180072
+Total time took: 92.83383703231812
+----------------------------------------------------------------------------------------------------
+Generation 48
+Best individual: ({'ctx': 5, 'den': 20, 'hash': 32, 'gamma': 0.95, 'mutations': 1, 'den_mut': 10, 'gamma_mut': 0.99},)
+Fitness: 4.379337852180072
+Total time took: 92.81605744361877
+----------------------------------------------------------------------------------------------------
+Generation 49
+Best individual: ({'ctx': 5, 'den': 20, 'hash': 64, 'gamma': 0.95, 'mutations': 1, 'den_mut': 7, 'gamma_mut': 0.99},)
+Fitness: 4.379337852180072
+Total time took: 91.16397142410278
+----------------------------------------------------------------------------------------------------
+Generation 50
+Best individual: ({'ctx': 5, 'den': 20, 'hash': 32, 'gamma': 0.95, 'mutations': 1, 'den_mut': 7, 'gamma_mut': 0.99},)
+Fitness: 4.379337852180072
+Total time took: 91.12760663032532
+----------------------------------------------------------------------------------------------------
+Best parameters found: ({'ctx': 5, 'den': 20, 'hash': 32, 'gamma': 0.95, 'mutations': 1, 'den_mut': 7, 'gamma_mut': 0.99},) with fitness 4.379337852180072
+Initial Generation
+Best individual from Initial Generation: ({'level': 14, 'window_log': 25, 'chain_log': 24, 'hash_log': 12, 'search_log': 9, 'min_match': 3, 'target_length': 16384, 'strategy': 0},)
+Fitness: 3.3555354676593003
+Total time took: 8.32615876197815
+----------------------------------------------------------------------------------------------------
+Generation 2
+Best individual: ({'level': 14, 'window_log': 25, 'chain_log': 24, 'hash_log': 12, 'search_log': 9, 'min_match': 3, 'target_length': 16384, 'strategy': 0},)
+Fitness: 3.3555354676593003
+Total time took: 5.805305480957031
+----------------------------------------------------------------------------------------------------
+Generation 3
+Best individual: ({'level': 14, 'window_log': 25, 'chain_log': 24, 'hash_log': 12, 'search_log': 9, 'min_match': 3, 'target_length': 16384, 'strategy': 0},)
+Fitness: 3.3555354676593003
+Total time took: 5.276546239852905
+----------------------------------------------------------------------------------------------------
+Generation 4
+Best individual: ({'level': 14, 'window_log': 25, 'chain_log': 24, 'hash_log': 12, 'search_log': 9, 'min_match': 3, 'target_length': 16384, 'strategy': 0},)
+Fitness: 3.3555354676593003
+Total time took: 5.007696151733398
+----------------------------------------------------------------------------------------------------
+Generation 5
+Best individual: ({'level': 14, 'window_log': 25, 'chain_log': 24, 'hash_log': 12, 'search_log': 9, 'min_match': 3, 'target_length': 16384, 'strategy': 0},)
+Fitness: 3.3555354676593003
+Total time took: 4.117024183273315
+----------------------------------------------------------------------------------------------------
+Generation 6
+Best individual: ({'level': 14, 'window_log': 25, 'chain_log': 24, 'hash_log': 8, 'search_log': 9, 'min_match': 3, 'target_length': 16384, 'strategy': 0},)
+Fitness: 3.3555374322033105
+Total time took: 4.084249019622803
+----------------------------------------------------------------------------------------------------
+Generation 7
+Best individual: ({'level': 18, 'window_log': 25, 'chain_log': 26, 'hash_log': 27, 'search_log': 9, 'min_match': 4, 'target_length': 16384, 'strategy': 0},)
+Fitness: 3.588650275249578
+Total time took: 7.056550025939941
+----------------------------------------------------------------------------------------------------
+Generation 8
+Best individual: ({'level': 18, 'window_log': 25, 'chain_log': 26, 'hash_log': 11, 'search_log': 9, 'min_match': 4, 'target_length': 16384, 'strategy': 0},)
+Fitness: 3.588654769224604
+Total time took: 5.326950550079346
+----------------------------------------------------------------------------------------------------
+Generation 9
+Best individual: ({'level': 18, 'window_log': 25, 'chain_log': 26, 'hash_log': 11, 'search_log': 9, 'min_match': 4, 'target_length': 16384, 'strategy': 0},)
+Fitness: 3.588654769224604
+Total time took: 6.147444009780884
+----------------------------------------------------------------------------------------------------
+Generation 10
+Best individual: ({'level': -11, 'window_log': 24, 'chain_log': 6, 'hash_log': 27, 'search_log': 9, 'min_match': 4, 'target_length': 131072, 'strategy': 0},)
+Fitness: 3.5887648751287533
+Total time took: 5.234597444534302
+----------------------------------------------------------------------------------------------------
+Generation 11
+Best individual: ({'level': -7, 'window_log': 24, 'chain_log': 18, 'hash_log': 27, 'search_log': 9, 'min_match': 4, 'target_length': 32768, 'strategy': 0},)
+Fitness: 3.5887648751287533
+Total time took: 6.930649280548096
+----------------------------------------------------------------------------------------------------
+Generation 12
+Best individual: ({'level': -37, 'window_log': 24, 'chain_log': 19, 'hash_log': 27, 'search_log': 9, 'min_match': 4, 'target_length': 16384, 'strategy': 0},)
+Fitness: 3.5887648751287533
+Total time took: 4.982536792755127
+----------------------------------------------------------------------------------------------------
+Generation 13
+Best individual: ({'level': 7, 'window_log': 24, 'chain_log': 19, 'hash_log': 27, 'search_log': 9, 'min_match': 4, 'target_length': 131072, 'strategy': 0},)
+Fitness: 3.5887648751287533
+Total time took: 5.257501840591431
+----------------------------------------------------------------------------------------------------
+Generation 14
+Best individual: ({'level': 1, 'window_log': 24, 'chain_log': 14, 'hash_log': 27, 'search_log': 9, 'min_match': 4, 'target_length': 4096, 'strategy': 0},)
+Fitness: 3.5887648751287533
+Total time took: 5.923052072525024
+----------------------------------------------------------------------------------------------------
+Generation 15
+Best individual: ({'level': -36, 'window_log': 24, 'chain_log': 26, 'hash_log': 27, 'search_log': 9, 'min_match': 4, 'target_length': 8192, 'strategy': 0},)
+Fitness: 3.5887648751287533
+Total time took: 5.407244920730591
+----------------------------------------------------------------------------------------------------
+Generation 16
+Best individual: ({'level': 4, 'window_log': 24, 'chain_log': 30, 'hash_log': 27, 'search_log': 9, 'min_match': 4, 'target_length': 8192, 'strategy': 0},)
+Fitness: 3.5887648751287533
+Total time took: 7.587785243988037
+----------------------------------------------------------------------------------------------------
+Generation 17
+Best individual: ({'level': -21, 'window_log': 24, 'chain_log': 23, 'hash_log': 27, 'search_log': 9, 'min_match': 4, 'target_length': 65536, 'strategy': 0},)
+Fitness: 3.5887648751287533
+Total time took: 5.653274297714233
+----------------------------------------------------------------------------------------------------
+Generation 18
+Best individual: ({'level': 19, 'window_log': 25, 'chain_log': 26, 'hash_log': 11, 'search_log': 10, 'min_match': 4, 'target_length': 32768, 'strategy': 0},)
+Fitness: 3.5887761108049894
+Total time took: 5.814655542373657
+----------------------------------------------------------------------------------------------------
+Generation 19
+Best individual: ({'level': 19, 'window_log': 25, 'chain_log': 26, 'hash_log': 11, 'search_log': 10, 'min_match': 4, 'target_length': 4096, 'strategy': 0},)
+Fitness: 3.5887761108049894
+Total time took: 5.466479301452637
+----------------------------------------------------------------------------------------------------
+Generation 20
+Best individual: ({'level': 19, 'window_log': 25, 'chain_log': 26, 'hash_log': 11, 'search_log': 10, 'min_match': 4, 'target_length': 32768, 'strategy': 0},)
+Fitness: 3.5887761108049894
+Total time took: 6.12860894203186
+----------------------------------------------------------------------------------------------------
+Generation 21
+Best individual: ({'level': 19, 'window_log': 25, 'chain_log': 26, 'hash_log': 11, 'search_log': 10, 'min_match': 4, 'target_length': 8192, 'strategy': 0},)
+Fitness: 3.5887761108049894
+Total time took: 10.355953931808472
+----------------------------------------------------------------------------------------------------
+Generation 22
+Best individual: ({'level': 19, 'window_log': 25, 'chain_log': 26, 'hash_log': 11, 'search_log': 10, 'min_match': 4, 'target_length': 65536, 'strategy': 0},)
+Fitness: 3.5887761108049894
+Total time took: 7.069073438644409
+----------------------------------------------------------------------------------------------------
+Generation 23
+Best individual: ({'level': 19, 'window_log': 25, 'chain_log': 26, 'hash_log': 11, 'search_log': 10, 'min_match': 4, 'target_length': 32768, 'strategy': 0},)
+Fitness: 3.5887761108049894
+Total time took: 6.920313835144043
+----------------------------------------------------------------------------------------------------
+Generation 24
+Best individual: ({'level': 19, 'window_log': 25, 'chain_log': 26, 'hash_log': 11, 'search_log': 10, 'min_match': 4, 'target_length': 131072, 'strategy': 0},)
+Fitness: 3.5887761108049894
+Total time took: 7.446683645248413
+----------------------------------------------------------------------------------------------------
+Generation 25
+Best individual: ({'level': 19, 'window_log': 25, 'chain_log': 26, 'hash_log': 11, 'search_log': 10, 'min_match': 4, 'target_length': 4096, 'strategy': 0},)
+Fitness: 3.5887761108049894
+Total time took: 5.896695613861084
+----------------------------------------------------------------------------------------------------
+Generation 26
+Best individual: ({'level': 19, 'window_log': 25, 'chain_log': 26, 'hash_log': 11, 'search_log': 10, 'min_match': 4, 'target_length': 32768, 'strategy': 0},)
+Fitness: 3.5887761108049894
+Total time took: 7.3423614501953125
+----------------------------------------------------------------------------------------------------
+Generation 27
+Best individual: ({'level': 19, 'window_log': 25, 'chain_log': 26, 'hash_log': 11, 'search_log': 10, 'min_match': 4, 'target_length': 65536, 'strategy': 0},)
+Fitness: 3.5887761108049894
+Total time took: 8.827208995819092
+----------------------------------------------------------------------------------------------------
+Generation 28
+Best individual: ({'level': 19, 'window_log': 25, 'chain_log': 26, 'hash_log': 11, 'search_log': 10, 'min_match': 4, 'target_length': 4096, 'strategy': 0},)
+Fitness: 3.5887761108049894
+Total time took: 6.261860132217407
+----------------------------------------------------------------------------------------------------
+Generation 29
+Best individual: ({'level': 19, 'window_log': 25, 'chain_log': 26, 'hash_log': 11, 'search_log': 10, 'min_match': 4, 'target_length': 65536, 'strategy': 0},)
+Fitness: 3.5887761108049894
+Total time took: 7.037834167480469
+----------------------------------------------------------------------------------------------------
+Generation 30
+Best individual: ({'level': 19, 'window_log': 25, 'chain_log': 26, 'hash_log': 11, 'search_log': 10, 'min_match': 4, 'target_length': 8192, 'strategy': 0},)
+Fitness: 3.5887761108049894
+Total time took: 8.27538776397705
+----------------------------------------------------------------------------------------------------
+Generation 31
+Best individual: ({'level': 19, 'window_log': 25, 'chain_log': 26, 'hash_log': 11, 'search_log': 10, 'min_match': 4, 'target_length': 65536, 'strategy': 0},)
+Fitness: 3.5887761108049894
+Total time took: 5.331942081451416
+----------------------------------------------------------------------------------------------------
+Generation 32
+Best individual: ({'level': 19, 'window_log': 25, 'chain_log': 26, 'hash_log': 11, 'search_log': 10, 'min_match': 4, 'target_length': 4096, 'strategy': 0},)
+Fitness: 3.5887761108049894
+Total time took: 6.611875057220459
+----------------------------------------------------------------------------------------------------
+Generation 33
+Best individual: ({'level': 19, 'window_log': 25, 'chain_log': 26, 'hash_log': 11, 'search_log': 10, 'min_match': 4, 'target_length': 16384, 'strategy': 0},)
+Fitness: 3.5887761108049894
+Total time took: 4.892955780029297
+----------------------------------------------------------------------------------------------------
+Generation 34
+Best individual: ({'level': 19, 'window_log': 25, 'chain_log': 26, 'hash_log': 11, 'search_log': 10, 'min_match': 4, 'target_length': 131072, 'strategy': 0},)
+Fitness: 3.5887761108049894
+Total time took: 5.031341791152954
+----------------------------------------------------------------------------------------------------
+Generation 35
+Best individual: ({'level': 19, 'window_log': 25, 'chain_log': 26, 'hash_log': 11, 'search_log': 10, 'min_match': 4, 'target_length': 4096, 'strategy': 0},)
+Fitness: 3.5887761108049894
+Total time took: 5.265290260314941
+----------------------------------------------------------------------------------------------------
+Generation 36
+Best individual: ({'level': 19, 'window_log': 25, 'chain_log': 26, 'hash_log': 11, 'search_log': 10, 'min_match': 4, 'target_length': 4096, 'strategy': 0},)
+Fitness: 3.5887761108049894
+Total time took: 7.0051233768463135
+----------------------------------------------------------------------------------------------------
+Generation 37
+Best individual: ({'level': 19, 'window_log': 25, 'chain_log': 26, 'hash_log': 11, 'search_log': 10, 'min_match': 4, 'target_length': 131072, 'strategy': 0},)
+Fitness: 3.5887761108049894
+Total time took: 7.345078229904175
+----------------------------------------------------------------------------------------------------
+Generation 38
+Best individual: ({'level': 19, 'window_log': 25, 'chain_log': 26, 'hash_log': 11, 'search_log': 10, 'min_match': 4, 'target_length': 65536, 'strategy': 0},)
+Fitness: 3.5887761108049894
+Total time took: 6.59662938117981
+----------------------------------------------------------------------------------------------------
+Generation 39
+Best individual: ({'level': 19, 'window_log': 25, 'chain_log': 26, 'hash_log': 11, 'search_log': 10, 'min_match': 4, 'target_length': 4096, 'strategy': 0},)
+Fitness: 3.5887761108049894
+Total time took: 6.969364881515503
+----------------------------------------------------------------------------------------------------
+Generation 40
+Best individual: ({'level': 19, 'window_log': 25, 'chain_log': 26, 'hash_log': 11, 'search_log': 10, 'min_match': 4, 'target_length': 4096, 'strategy': 0},)
+Fitness: 3.5887761108049894
+Total time took: 8.631236791610718
+----------------------------------------------------------------------------------------------------
+Generation 41
+Best individual: ({'level': 19, 'window_log': 25, 'chain_log': 26, 'hash_log': 11, 'search_log': 10, 'min_match': 4, 'target_length': 131072, 'strategy': 0},)
+Fitness: 3.5887761108049894
+Total time took: 6.791244268417358
+----------------------------------------------------------------------------------------------------
+Generation 42
+Best individual: ({'level': 19, 'window_log': 25, 'chain_log': 26, 'hash_log': 11, 'search_log': 10, 'min_match': 4, 'target_length': 8192, 'strategy': 0},)
+Fitness: 3.5887761108049894
+Total time took: 6.876418113708496
+----------------------------------------------------------------------------------------------------
+Generation 43
+Best individual: ({'level': 19, 'window_log': 25, 'chain_log': 26, 'hash_log': 11, 'search_log': 10, 'min_match': 4, 'target_length': 65536, 'strategy': 0},)
+Fitness: 3.5887761108049894
+Total time took: 7.403552055358887
+----------------------------------------------------------------------------------------------------
+Generation 44
+Best individual: ({'level': 19, 'window_log': 25, 'chain_log': 26, 'hash_log': 11, 'search_log': 10, 'min_match': 4, 'target_length': 8192, 'strategy': 0},)
+Fitness: 3.5887761108049894
+Total time took: 8.071501016616821
+----------------------------------------------------------------------------------------------------
+Generation 45
+Best individual: ({'level': 19, 'window_log': 25, 'chain_log': 26, 'hash_log': 11, 'search_log': 10, 'min_match': 4, 'target_length': 4096, 'strategy': 0},)
+Fitness: 3.5887761108049894
+Total time took: 6.559814214706421
+----------------------------------------------------------------------------------------------------
+Generation 46
+Best individual: ({'level': 19, 'window_log': 25, 'chain_log': 26, 'hash_log': 11, 'search_log': 10, 'min_match': 4, 'target_length': 4096, 'strategy': 0},)
+Fitness: 3.5887761108049894
+Total time took: 5.5764570236206055
+----------------------------------------------------------------------------------------------------
+Generation 47
+Best individual: ({'level': 19, 'window_log': 25, 'chain_log': 26, 'hash_log': 11, 'search_log': 10, 'min_match': 4, 'target_length': 4096, 'strategy': 0},)
+Fitness: 3.5887761108049894
+Total time took: 6.758925914764404
+----------------------------------------------------------------------------------------------------
+Generation 48
+Best individual: ({'level': 19, 'window_log': 25, 'chain_log': 26, 'hash_log': 11, 'search_log': 10, 'min_match': 4, 'target_length': 65536, 'strategy': 0},)
+Fitness: 3.5887761108049894
+Total time took: 5.696120023727417
+----------------------------------------------------------------------------------------------------
+Generation 49
+Best individual: ({'level': 19, 'window_log': 25, 'chain_log': 26, 'hash_log': 11, 'search_log': 10, 'min_match': 4, 'target_length': 32768, 'strategy': 0},)
+Fitness: 3.5887761108049894
+Total time took: 6.4949657917022705
+----------------------------------------------------------------------------------------------------
+Generation 50
+Best individual: ({'level': 19, 'window_log': 25, 'chain_log': 26, 'hash_log': 11, 'search_log': 10, 'min_match': 4, 'target_length': 131072, 'strategy': 0},)
+Fitness: 3.5887761108049894
+Total time took: 7.837107419967651
+----------------------------------------------------------------------------------------------------
+Best parameters found: ({'level': 19, 'window_log': 25, 'chain_log': 26, 'hash_log': 11, 'search_log': 10, 'min_match': 4, 'target_length': 131072, 'strategy': 0},) with fitness 3.5887761108049894
+Initial Generation
+Best individual from Initial Generation: ({'dict_size': 16777216, 'lc': 3, 'lp': 0, 'pb': 1, 'mode': 1, 'mf': 'bt2', 'nice_len': 32, 'depth': 100},)
+Fitness: 3.6011781042260953
+Total time took: 76.53605628013611
+----------------------------------------------------------------------------------------------------
+Generation 2
+Best individual: ({'dict_size': 16777216, 'lc': 3, 'lp': 0, 'pb': 1, 'mode': 1, 'mf': 'bt2', 'nice_len': 32, 'depth': 100},)
+Fitness: 3.6011781042260953
+Total time took: 36.93024396896362
+----------------------------------------------------------------------------------------------------
+Generation 3
+Best individual: ({'dict_size': 16777216, 'lc': 3, 'lp': 0, 'pb': 1, 'mode': 1, 'mf': 'bt2', 'nice_len': 32, 'depth': 100},)
+Fitness: 3.6011781042260953
+Total time took: 41.30684494972229
+----------------------------------------------------------------------------------------------------
+Generation 4
+Best individual: ({'dict_size': 8388608, 'lc': 1, 'lp': 0, 'pb': 0, 'mode': 1, 'mf': 'bt4', 'nice_len': 32, 'depth': 0},)
+Fitness: 3.601386284691677
+Total time took: 71.47986435890198
+----------------------------------------------------------------------------------------------------
+Generation 5
+Best individual: ({'dict_size': 8388608, 'lc': 1, 'lp': 0, 'pb': 0, 'mode': 1, 'mf': 'bt4', 'nice_len': 32, 'depth': 0},)
+Fitness: 3.601386284691677
+Total time took: 58.1471152305603
+----------------------------------------------------------------------------------------------------
+Generation 6
+Best individual: ({'dict_size': 65536, 'lc': 4, 'lp': 0, 'pb': 0, 'mode': 1, 'mf': 'bt4', 'nice_len': 64, 'depth': 1000},)
+Fitness: 3.601784610047811
+Total time took: 43.554951429367065
+----------------------------------------------------------------------------------------------------
+Generation 7
+Best individual: ({'dict_size': 268435456, 'lc': 4, 'lp': 0, 'pb': 0, 'mode': 1, 'mf': 'bt4', 'nice_len': 64, 'depth': 1000},)
+Fitness: 3.601784610047811
+Total time took: 55.44019794464111
+----------------------------------------------------------------------------------------------------
+Generation 8
+Best individual: ({'dict_size': 8388608, 'lc': 4, 'lp': 0, 'pb': 0, 'mode': 1, 'mf': 'bt4', 'nice_len': 32, 'depth': 0},)
+Fitness: 3.602336979613181
+Total time took: 30.416872262954712
+----------------------------------------------------------------------------------------------------
+Generation 9
+Best individual: ({'dict_size': 8388608, 'lc': 4, 'lp': 1, 'pb': 0, 'mode': 1, 'mf': 'bt4', 'nice_len': 32, 'depth': 0},)
+Fitness: 3.602336979613181
+Total time took: 36.81909108161926
+----------------------------------------------------------------------------------------------------
+Generation 10
+Best individual: ({'dict_size': 8388608, 'lc': 4, 'lp': 2, 'pb': 0, 'mode': 1, 'mf': 'bt4', 'nice_len': 32, 'depth': 0},)
+Fitness: 3.602336979613181
+Total time took: 51.00089883804321
+----------------------------------------------------------------------------------------------------
+Generation 11
+Best individual: ({'dict_size': 8388608, 'lc': 4, 'lp': 4, 'pb': 0, 'mode': 1, 'mf': 'bt4', 'nice_len': 32, 'depth': 0},)
+Fitness: 3.602336979613181
+Total time took: 62.195708990097046
+----------------------------------------------------------------------------------------------------
+Generation 12
+Best individual: ({'dict_size': 8388608, 'lc': 4, 'lp': 3, 'pb': 0, 'mode': 1, 'mf': 'bt4', 'nice_len': 32, 'depth': 0},)
+Fitness: 3.602336979613181
+Total time took: 48.816657066345215
+----------------------------------------------------------------------------------------------------
+Generation 13
+Best individual: ({'dict_size': 8388608, 'lc': 4, 'lp': 4, 'pb': 0, 'mode': 1, 'mf': 'bt4', 'nice_len': 32, 'depth': 0},)
+Fitness: 3.602336979613181
+Total time took: 27.199101448059082
+----------------------------------------------------------------------------------------------------
+Generation 14
+Best individual: ({'dict_size': 8388608, 'lc': 4, 'lp': 1, 'pb': 0, 'mode': 1, 'mf': 'bt4', 'nice_len': 32, 'depth': 0},)
+Fitness: 3.602336979613181
+Total time took: 57.060012340545654
+----------------------------------------------------------------------------------------------------
+Generation 15
+Best individual: ({'dict_size': 8388608, 'lc': 4, 'lp': 1, 'pb': 0, 'mode': 1, 'mf': 'bt4', 'nice_len': 32, 'depth': 0},)
+Fitness: 3.602336979613181
+Total time took: 65.21977996826172
+----------------------------------------------------------------------------------------------------
+Generation 16
+Best individual: ({'dict_size': 8388608, 'lc': 4, 'lp': 1, 'pb': 0, 'mode': 1, 'mf': 'bt4', 'nice_len': 32, 'depth': 0},)
+Fitness: 3.602336979613181
+Total time took: 39.04813766479492
+----------------------------------------------------------------------------------------------------
+Generation 17
+Best individual: ({'dict_size': 33554432, 'lc': 4, 'lp': 0, 'pb': 1, 'mode': 1, 'mf': 'bt4', 'nice_len': 32, 'depth': 1000},)
+Fitness: 3.6024366052707
+Total time took: 57.26981854438782
+----------------------------------------------------------------------------------------------------
+Generation 18
+Best individual: ({'dict_size': 33554432, 'lc': 4, 'lp': 0, 'pb': 1, 'mode': 1, 'mf': 'bt4', 'nice_len': 32, 'depth': 0},)
+Fitness: 3.6024366052707
+Total time took: 29.32230567932129
+----------------------------------------------------------------------------------------------------
+Generation 19
+Best individual: ({'dict_size': 33554432, 'lc': 4, 'lp': 0, 'pb': 1, 'mode': 1, 'mf': 'bt4', 'nice_len': 32, 'depth': 0},)
+Fitness: 3.6024366052707
+Total time took: 35.47418451309204
+----------------------------------------------------------------------------------------------------
+Generation 20
+Best individual: ({'dict_size': 33554432, 'lc': 4, 'lp': 0, 'pb': 1, 'mode': 1, 'mf': 'bt4', 'nice_len': 32, 'depth': 100},)
+Fitness: 3.6024366052707
+Total time took: 73.3015353679657
+----------------------------------------------------------------------------------------------------
+Generation 21
+Best individual: ({'dict_size': 33554432, 'lc': 4, 'lp': 0, 'pb': 1, 'mode': 1, 'mf': 'bt4', 'nice_len': 32, 'depth': 200},)
+Fitness: 3.6024366052707
+Total time took: 34.360352993011475
+----------------------------------------------------------------------------------------------------
+Generation 22
+Best individual: ({'dict_size': 33554432, 'lc': 4, 'lp': 0, 'pb': 1, 'mode': 1, 'mf': 'bt4', 'nice_len': 32, 'depth': 100},)
+Fitness: 3.6024366052707
+Total time took: 35.69596767425537
+----------------------------------------------------------------------------------------------------
+Generation 23
+Best individual: ({'dict_size': 33554432, 'lc': 4, 'lp': 0, 'pb': 1, 'mode': 1, 'mf': 'bt4', 'nice_len': 32, 'depth': 0},)
+Fitness: 3.6024366052707
+Total time took: 31.54610514640808
+----------------------------------------------------------------------------------------------------
+Generation 24
+Best individual: ({'dict_size': 33554432, 'lc': 4, 'lp': 0, 'pb': 1, 'mode': 1, 'mf': 'bt4', 'nice_len': 32, 'depth': 0},)
+Fitness: 3.6024366052707
+Total time took: 36.431859493255615
+----------------------------------------------------------------------------------------------------
+Generation 25
+Best individual: ({'dict_size': 33554432, 'lc': 4, 'lp': 0, 'pb': 1, 'mode': 1, 'mf': 'bt4', 'nice_len': 32, 'depth': 1000},)
+Fitness: 3.6024366052707
+Total time took: 42.74587965011597
+----------------------------------------------------------------------------------------------------
+Generation 26
+Best individual: ({'dict_size': 33554432, 'lc': 4, 'lp': 0, 'pb': 1, 'mode': 1, 'mf': 'bt4', 'nice_len': 32, 'depth': 50},)
+Fitness: 3.6024366052707
+Total time took: 40.44203805923462
+----------------------------------------------------------------------------------------------------
+Generation 27
+Best individual: ({'dict_size': 33554432, 'lc': 4, 'lp': 0, 'pb': 1, 'mode': 1, 'mf': 'bt4', 'nice_len': 32, 'depth': 0},)
+Fitness: 3.6024366052707
+Total time took: 65.78554940223694
+----------------------------------------------------------------------------------------------------
+Generation 28
+Best individual: ({'dict_size': 33554432, 'lc': 4, 'lp': 0, 'pb': 1, 'mode': 1, 'mf': 'bt4', 'nice_len': 32, 'depth': 0},)
+Fitness: 3.6024366052707
+Total time took: 69.39584755897522
+----------------------------------------------------------------------------------------------------
+Generation 29
+Best individual: ({'dict_size': 33554432, 'lc': 4, 'lp': 0, 'pb': 1, 'mode': 1, 'mf': 'bt4', 'nice_len': 32, 'depth': 1000},)
+Fitness: 3.6024366052707
+Total time took: 58.63864850997925
+----------------------------------------------------------------------------------------------------
+Generation 30
+Best individual: ({'dict_size': 33554432, 'lc': 4, 'lp': 0, 'pb': 1, 'mode': 1, 'mf': 'bt4', 'nice_len': 32, 'depth': 200},)
+Fitness: 3.6024366052707
+Total time took: 64.74217057228088
+----------------------------------------------------------------------------------------------------
+Generation 31
+Best individual: ({'dict_size': 33554432, 'lc': 4, 'lp': 0, 'pb': 1, 'mode': 1, 'mf': 'bt4', 'nice_len': 32, 'depth': 100},)
+Fitness: 3.6024366052707
+Total time took: 48.7485990524292
+----------------------------------------------------------------------------------------------------
+Generation 32
+Best individual: ({'dict_size': 33554432, 'lc': 4, 'lp': 0, 'pb': 1, 'mode': 1, 'mf': 'bt4', 'nice_len': 32, 'depth': 50},)
+Fitness: 3.6024366052707
+Total time took: 36.98654842376709
+----------------------------------------------------------------------------------------------------
+Generation 33
+Best individual: ({'dict_size': 33554432, 'lc': 4, 'lp': 0, 'pb': 1, 'mode': 1, 'mf': 'bt4', 'nice_len': 32, 'depth': 500},)
+Fitness: 3.6024366052707
+Total time took: 48.04991030693054
+----------------------------------------------------------------------------------------------------
+Generation 34
+Best individual: ({'dict_size': 33554432, 'lc': 4, 'lp': 0, 'pb': 1, 'mode': 1, 'mf': 'bt4', 'nice_len': 32, 'depth': 200},)
+Fitness: 3.6024366052707
+Total time took: 29.662956714630127
+----------------------------------------------------------------------------------------------------
+Generation 35
+Best individual: ({'dict_size': 33554432, 'lc': 4, 'lp': 0, 'pb': 1, 'mode': 1, 'mf': 'bt4', 'nice_len': 32, 'depth': 200},)
+Fitness: 3.6024366052707
+Total time took: 67.04881000518799
+----------------------------------------------------------------------------------------------------
+Generation 36
+Best individual: ({'dict_size': 33554432, 'lc': 4, 'lp': 0, 'pb': 1, 'mode': 1, 'mf': 'bt4', 'nice_len': 32, 'depth': 50},)
+Fitness: 3.6024366052707
+Total time took: 24.565596342086792
+----------------------------------------------------------------------------------------------------
+Generation 37
+Best individual: ({'dict_size': 33554432, 'lc': 4, 'lp': 0, 'pb': 1, 'mode': 1, 'mf': 'bt4', 'nice_len': 32, 'depth': 1000},)
+Fitness: 3.6024366052707
+Total time took: 33.41181540489197
+----------------------------------------------------------------------------------------------------
+Generation 38
+Best individual: ({'dict_size': 33554432, 'lc': 4, 'lp': 0, 'pb': 1, 'mode': 1, 'mf': 'bt4', 'nice_len': 32, 'depth': 50},)
+Fitness: 3.6024366052707
+Total time took: 31.57302498817444
+----------------------------------------------------------------------------------------------------
+Generation 39
+Best individual: ({'dict_size': 33554432, 'lc': 4, 'lp': 0, 'pb': 1, 'mode': 1, 'mf': 'bt4', 'nice_len': 32, 'depth': 0},)
+Fitness: 3.6024366052707
+Total time took: 52.96622347831726
+----------------------------------------------------------------------------------------------------
+Generation 40
+Best individual: ({'dict_size': 33554432, 'lc': 4, 'lp': 0, 'pb': 1, 'mode': 1, 'mf': 'bt4', 'nice_len': 32, 'depth': 1000},)
+Fitness: 3.6024366052707
+Total time took: 51.24402451515198
+----------------------------------------------------------------------------------------------------
+Generation 41
+Best individual: ({'dict_size': 33554432, 'lc': 4, 'lp': 0, 'pb': 1, 'mode': 1, 'mf': 'bt4', 'nice_len': 32, 'depth': 1000},)
+Fitness: 3.6024366052707
+Total time took: 52.37010478973389
+----------------------------------------------------------------------------------------------------
+Generation 42
+Best individual: ({'dict_size': 33554432, 'lc': 4, 'lp': 0, 'pb': 1, 'mode': 1, 'mf': 'bt4', 'nice_len': 32, 'depth': 0},)
+Fitness: 3.6024366052707
+Total time took: 67.88480973243713
+----------------------------------------------------------------------------------------------------
+Generation 43
+Best individual: ({'dict_size': 33554432, 'lc': 4, 'lp': 0, 'pb': 1, 'mode': 1, 'mf': 'bt4', 'nice_len': 32, 'depth': 50},)
+Fitness: 3.6024366052707
+Total time took: 56.18506407737732
+----------------------------------------------------------------------------------------------------
+Generation 44
+Best individual: ({'dict_size': 33554432, 'lc': 4, 'lp': 0, 'pb': 1, 'mode': 1, 'mf': 'bt4', 'nice_len': 32, 'depth': 500},)
+Fitness: 3.6024366052707
+Total time took: 41.65082550048828
+----------------------------------------------------------------------------------------------------
+Generation 45
+Best individual: ({'dict_size': 33554432, 'lc': 4, 'lp': 0, 'pb': 1, 'mode': 1, 'mf': 'bt4', 'nice_len': 32, 'depth': 50},)
+Fitness: 3.6024366052707
+Total time took: 52.7910373210907
+----------------------------------------------------------------------------------------------------
+Generation 46
+Best individual: ({'dict_size': 33554432, 'lc': 4, 'lp': 0, 'pb': 1, 'mode': 1, 'mf': 'bt4', 'nice_len': 32, 'depth': 1000},)
+Fitness: 3.6024366052707
+Total time took: 58.31355834007263
+----------------------------------------------------------------------------------------------------
+Generation 47
+Best individual: ({'dict_size': 33554432, 'lc': 4, 'lp': 0, 'pb': 1, 'mode': 1, 'mf': 'bt4', 'nice_len': 32, 'depth': 500},)
+Fitness: 3.6024366052707
+Total time took: 57.696659564971924
+----------------------------------------------------------------------------------------------------
+Generation 48
+Best individual: ({'dict_size': 33554432, 'lc': 4, 'lp': 0, 'pb': 1, 'mode': 1, 'mf': 'bt4', 'nice_len': 32, 'depth': 1000},)
+Fitness: 3.6024366052707
+Total time took: 40.40568399429321
+----------------------------------------------------------------------------------------------------
+Generation 49
+Best individual: ({'dict_size': 33554432, 'lc': 4, 'lp': 0, 'pb': 1, 'mode': 1, 'mf': 'bt4', 'nice_len': 32, 'depth': 100},)
+Fitness: 3.6024366052707
+Total time took: 32.735849380493164
+----------------------------------------------------------------------------------------------------
+Generation 50
+Best individual: ({'dict_size': 33554432, 'lc': 4, 'lp': 0, 'pb': 1, 'mode': 1, 'mf': 'bt4', 'nice_len': 32, 'depth': 100},)
+Fitness: 3.6024366052707
+Total time took: 35.24819278717041
+----------------------------------------------------------------------------------------------------
+Best parameters found: ({'dict_size': 33554432, 'lc': 4, 'lp': 0, 'pb': 1, 'mode': 1, 'mf': 'bt4', 'nice_len': 32, 'depth': 100},) with fitness 3.6024366052707
+Initial Generation
+Best individual from Initial Generation: ({'quality': 11, 'lgwin': 24, 'lgblock': 22, 'mode': 'font'},)
+Fitness: 3.5939835432544527
+Total time took: 10.453242540359497
+----------------------------------------------------------------------------------------------------
+Generation 2
+Best individual: ({'quality': 11, 'lgwin': 24, 'lgblock': 20, 'mode': 'font'},)
+Fitness: 3.5953768502510495
+Total time took: 9.851901769638062
+----------------------------------------------------------------------------------------------------
+Generation 3
+Best individual: ({'quality': 11, 'lgwin': 24, 'lgblock': 20, 'mode': 'font'},)
+Fitness: 3.5953768502510495
+Total time took: 9.93787431716919
+----------------------------------------------------------------------------------------------------
+Generation 4
+Best individual: ({'quality': 11, 'lgwin': 23, 'lgblock': 21, 'mode': 'generic'},)
+Fitness: 3.596245395216107
+Total time took: 13.483076810836792
+----------------------------------------------------------------------------------------------------
+Generation 5
+Best individual: ({'quality': 11, 'lgwin': 24, 'lgblock': 23, 'mode': 'generic'},)
+Fitness: 3.6007278831516976
+Total time took: 17.861289024353027
+----------------------------------------------------------------------------------------------------
+Generation 6
+Best individual: ({'quality': 11, 'lgwin': 24, 'lgblock': 24, 'mode': 'font'},)
+Fitness: 3.6007278831516976
+Total time took: 21.291879415512085
+----------------------------------------------------------------------------------------------------
+Generation 7
+Best individual: ({'quality': 11, 'lgwin': 23, 'lgblock': 22, 'mode': 'text'},)
+Fitness: 3.60180724481575
+Total time took: 24.590226650238037
+----------------------------------------------------------------------------------------------------
+Generation 8
+Best individual: ({'quality': 11, 'lgwin': 23, 'lgblock': 20, 'mode': 'text'},)
+Fitness: 3.60180724481575
+Total time took: 26.026827096939087
+----------------------------------------------------------------------------------------------------
+Generation 9
+Best individual: ({'quality': 11, 'lgwin': 23, 'lgblock': 21, 'mode': 'text'},)
+Fitness: 3.60180724481575
+Total time took: 27.887338638305664
+----------------------------------------------------------------------------------------------------
+Generation 10
+Best individual: ({'quality': 11, 'lgwin': 23, 'lgblock': 18, 'mode': 'text'},)
+Fitness: 3.60180724481575
+Total time took: 28.520376682281494
+----------------------------------------------------------------------------------------------------
+Generation 11
+Best individual: ({'quality': 11, 'lgwin': 23, 'lgblock': 16, 'mode': 'text'},)
+Fitness: 3.60180724481575
+Total time took: 27.88729453086853
+----------------------------------------------------------------------------------------------------
+Generation 12
+Best individual: ({'quality': 11, 'lgwin': 23, 'lgblock': 17, 'mode': 'text'},)
+Fitness: 3.60180724481575
+Total time took: 27.137147665023804
+----------------------------------------------------------------------------------------------------
+Generation 13
+Best individual: ({'quality': 11, 'lgwin': 23, 'lgblock': 19, 'mode': 'text'},)
+Fitness: 3.60180724481575
+Total time took: 26.755950927734375
+----------------------------------------------------------------------------------------------------
+Generation 14
+Best individual: ({'quality': 11, 'lgwin': 23, 'lgblock': 22, 'mode': 'text'},)
+Fitness: 3.60180724481575
+Total time took: 27.18729329109192
+----------------------------------------------------------------------------------------------------
+Generation 15
+Best individual: ({'quality': 11, 'lgwin': 23, 'lgblock': 24, 'mode': 'text'},)
+Fitness: 3.60180724481575
+Total time took: 26.543466329574585
+----------------------------------------------------------------------------------------------------
+Generation 16
+Best individual: ({'quality': 11, 'lgwin': 23, 'lgblock': 23, 'mode': 'text'},)
+Fitness: 3.60180724481575
+Total time took: 27.76582407951355
+----------------------------------------------------------------------------------------------------
+Generation 17
+Best individual: ({'quality': 11, 'lgwin': 23, 'lgblock': 21, 'mode': 'text'},)
+Fitness: 3.60180724481575
+Total time took: 27.064067602157593
+----------------------------------------------------------------------------------------------------
+Generation 18
+Best individual: ({'quality': 11, 'lgwin': 23, 'lgblock': 21, 'mode': 'text'},)
+Fitness: 3.60180724481575
+Total time took: 27.474540948867798
+----------------------------------------------------------------------------------------------------
+Generation 19
+Best individual: ({'quality': 11, 'lgwin': 23, 'lgblock': 21, 'mode': 'text'},)
+Fitness: 3.60180724481575
+Total time took: 28.059946537017822
+----------------------------------------------------------------------------------------------------
+Generation 20
+Best individual: ({'quality': 11, 'lgwin': 23, 'lgblock': 16, 'mode': 'text'},)
+Fitness: 3.60180724481575
+Total time took: 27.411719799041748
+----------------------------------------------------------------------------------------------------
+Generation 21
+Best individual: ({'quality': 11, 'lgwin': 23, 'lgblock': 18, 'mode': 'text'},)
+Fitness: 3.60180724481575
+Total time took: 27.219995260238647
+----------------------------------------------------------------------------------------------------
+Generation 22
+Best individual: ({'quality': 11, 'lgwin': 23, 'lgblock': 22, 'mode': 'text'},)
+Fitness: 3.60180724481575
+Total time took: 27.72717308998108
+----------------------------------------------------------------------------------------------------
+Generation 23
+Best individual: ({'quality': 11, 'lgwin': 23, 'lgblock': 22, 'mode': 'text'},)
+Fitness: 3.60180724481575
+Total time took: 27.301802396774292
+----------------------------------------------------------------------------------------------------
+Generation 24
+Best individual: ({'quality': 11, 'lgwin': 23, 'lgblock': 22, 'mode': 'text'},)
+Fitness: 3.60180724481575
+Total time took: 26.480268001556396
+----------------------------------------------------------------------------------------------------
+Generation 25
+Best individual: ({'quality': 11, 'lgwin': 23, 'lgblock': 18, 'mode': 'text'},)
+Fitness: 3.60180724481575
+Total time took: 25.826234579086304
+----------------------------------------------------------------------------------------------------
+Generation 26
+Best individual: ({'quality': 11, 'lgwin': 23, 'lgblock': 22, 'mode': 'text'},)
+Fitness: 3.60180724481575
+Total time took: 24.74718737602234
+----------------------------------------------------------------------------------------------------
+Generation 27
+Best individual: ({'quality': 11, 'lgwin': 23, 'lgblock': 20, 'mode': 'text'},)
+Fitness: 3.60180724481575
+Total time took: 24.194120168685913
+----------------------------------------------------------------------------------------------------
+Generation 28
+Best individual: ({'quality': 11, 'lgwin': 23, 'lgblock': 19, 'mode': 'text'},)
+Fitness: 3.60180724481575
+Total time took: 24.765064239501953
+----------------------------------------------------------------------------------------------------
+Generation 29
+Best individual: ({'quality': 11, 'lgwin': 23, 'lgblock': 19, 'mode': 'text'},)
+Fitness: 3.60180724481575
+Total time took: 25.087344884872437
+----------------------------------------------------------------------------------------------------
+Generation 30
+Best individual: ({'quality': 11, 'lgwin': 23, 'lgblock': 24, 'mode': 'text'},)
+Fitness: 3.60180724481575
+Total time took: 29.12987756729126
+----------------------------------------------------------------------------------------------------
+Generation 31
+Best individual: ({'quality': 11, 'lgwin': 23, 'lgblock': 18, 'mode': 'text'},)
+Fitness: 3.60180724481575
+Total time took: 27.491363286972046
+----------------------------------------------------------------------------------------------------
+Generation 32
+Best individual: ({'quality': 11, 'lgwin': 23, 'lgblock': 24, 'mode': 'text'},)
+Fitness: 3.60180724481575
+Total time took: 28.9963321685791
+----------------------------------------------------------------------------------------------------
+Generation 33
+Best individual: ({'quality': 11, 'lgwin': 23, 'lgblock': 19, 'mode': 'text'},)
+Fitness: 3.60180724481575
+Total time took: 29.656734228134155
+----------------------------------------------------------------------------------------------------
+Generation 34
+Best individual: ({'quality': 11, 'lgwin': 23, 'lgblock': 23, 'mode': 'text'},)
+Fitness: 3.60180724481575
+Total time took: 27.39567494392395
+----------------------------------------------------------------------------------------------------
+Generation 35
+Best individual: ({'quality': 11, 'lgwin': 23, 'lgblock': 18, 'mode': 'text'},)
+Fitness: 3.60180724481575
+Total time took: 25.308395624160767
+----------------------------------------------------------------------------------------------------
+Generation 36
+Best individual: ({'quality': 11, 'lgwin': 23, 'lgblock': 20, 'mode': 'text'},)
+Fitness: 3.60180724481575
+Total time took: 26.845532178878784
+----------------------------------------------------------------------------------------------------
+Generation 37
+Best individual: ({'quality': 11, 'lgwin': 23, 'lgblock': 18, 'mode': 'text'},)
+Fitness: 3.60180724481575
+Total time took: 28.296889305114746
+----------------------------------------------------------------------------------------------------
+Generation 38
+Best individual: ({'quality': 11, 'lgwin': 23, 'lgblock': 19, 'mode': 'text'},)
+Fitness: 3.60180724481575
+Total time took: 27.887422561645508
+----------------------------------------------------------------------------------------------------
+Generation 39
+Best individual: ({'quality': 11, 'lgwin': 23, 'lgblock': 21, 'mode': 'text'},)
+Fitness: 3.60180724481575
+Total time took: 27.746248960494995
+----------------------------------------------------------------------------------------------------
+Generation 40
+Best individual: ({'quality': 11, 'lgwin': 23, 'lgblock': 18, 'mode': 'text'},)
+Fitness: 3.60180724481575
+Total time took: 24.03214192390442
+----------------------------------------------------------------------------------------------------
+Generation 41
+Best individual: ({'quality': 11, 'lgwin': 23, 'lgblock': 16, 'mode': 'text'},)
+Fitness: 3.60180724481575
+Total time took: 21.007244348526
+----------------------------------------------------------------------------------------------------
+Generation 42
+Best individual: ({'quality': 11, 'lgwin': 23, 'lgblock': 23, 'mode': 'text'},)
+Fitness: 3.60180724481575
+Total time took: 21.21267867088318
+----------------------------------------------------------------------------------------------------
+Generation 43
+Best individual: ({'quality': 11, 'lgwin': 23, 'lgblock': 24, 'mode': 'text'},)
+Fitness: 3.60180724481575
+Total time took: 25.577097177505493
+----------------------------------------------------------------------------------------------------
+Generation 44
+Best individual: ({'quality': 11, 'lgwin': 23, 'lgblock': 16, 'mode': 'text'},)
+Fitness: 3.60180724481575
+Total time took: 27.273550033569336
+----------------------------------------------------------------------------------------------------
+Generation 45
+Best individual: ({'quality': 11, 'lgwin': 23, 'lgblock': 21, 'mode': 'text'},)
+Fitness: 3.60180724481575
+Total time took: 26.571988105773926
+----------------------------------------------------------------------------------------------------
+Generation 46
+Best individual: ({'quality': 11, 'lgwin': 23, 'lgblock': 16, 'mode': 'text'},)
+Fitness: 3.60180724481575
+Total time took: 26.765167236328125
+----------------------------------------------------------------------------------------------------
+Generation 47
+Best individual: ({'quality': 11, 'lgwin': 23, 'lgblock': 17, 'mode': 'text'},)
+Fitness: 3.60180724481575
+Total time took: 28.645479917526245
+----------------------------------------------------------------------------------------------------
+Generation 48
+Best individual: ({'quality': 11, 'lgwin': 23, 'lgblock': 24, 'mode': 'text'},)
+Fitness: 3.60180724481575
+Total time took: 27.833401918411255
+----------------------------------------------------------------------------------------------------
+Generation 49
+Best individual: ({'quality': 11, 'lgwin': 23, 'lgblock': 16, 'mode': 'text'},)
+Fitness: 3.60180724481575
+Total time took: 28.46113657951355
+----------------------------------------------------------------------------------------------------
+Generation 50
+Best individual: ({'quality': 11, 'lgwin': 23, 'lgblock': 22, 'mode': 'text'},)
+Fitness: 3.60180724481575
+Total time took: 28.116783380508423
+----------------------------------------------------------------------------------------------------
+Best parameters found: ({'quality': 11, 'lgwin': 23, 'lgblock': 22, 'mode': 'text'},) with fitness 3.60180724481575
+------------ ------------
+End Time: 2025-02-10 16:05:35 WET
