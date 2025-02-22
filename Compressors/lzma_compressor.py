@@ -2,16 +2,18 @@ import lzma
 import os
 from Compressors.base_compressor import BaseCompressor
 
+
 class LzmaCompressor(BaseCompressor):
     def __init__(self, input_file_path, reference_file_path=None, temp="temp"):
         super().__init__(input_file_path, reference_file_path, temp)
 
-    def create_command(self, params):
+    @staticmethod
+    def create_command(params):
         """Create an LZMA compressor with correctly formatted filters."""
         # Ensure valid values for `mode`
-        if  params["lc"] + params["lp"] > 4:
+        if params["lc"] + params["lp"] > 4:
             return None
-        
+
         # Ensure valid values for `mode`
         mode_mapping = {0: lzma.MODE_FAST, 1: lzma.MODE_NORMAL}
         mode = mode_mapping.get(params["mode"], lzma.MODE_NORMAL)
@@ -39,7 +41,7 @@ class LzmaCompressor(BaseCompressor):
             ])
         except Exception as e:
             print(f"Error creating LZMA compressor: {e} with params: {params}")
-            return None 
+            return None
 
     def evaluate(self, params_list, name):
         """Evaluate LZMA compression efficiency (Compression Ratio)."""
@@ -50,7 +52,7 @@ class LzmaCompressor(BaseCompressor):
         """Compress a file using LZMA and compute compression ratio."""
         compressed_file_path = os.path.join(self.temp, f"{name}.xz")
         compressor = self.create_command(params[0])
-        
+
         if compressor is None:
             return 0
 

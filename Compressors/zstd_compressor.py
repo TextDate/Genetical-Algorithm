@@ -8,7 +8,8 @@ class ZstdCompressor(BaseCompressor):
     def __init__(self, input_file_path, reference_file_path, temp="temp"):
         super().__init__(input_file_path, reference_file_path, temp)
 
-    def create_command(self, params):
+    @staticmethod
+    def create_command(params):
         """Create a Zstd compressor with custom parameters."""
         try:
             compression_params = zstd.ZstdCompressionParameters(
