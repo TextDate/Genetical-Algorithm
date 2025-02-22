@@ -2,13 +2,15 @@ import brotli
 import os
 from Compressors.base_compressor import BaseCompressor
 
+
 class BrotliCompressor(BaseCompressor):
     def __init__(self, input_file_path, reference_file_path=None, temp="temp"):
         super().__init__(input_file_path, reference_file_path, temp)
 
-    def create_command(self, params):
+    @staticmethod
+    def create_command(params):
         """Create a Brotli compressor with tunable parameters."""
-        
+
         # Map mode strings to Brotli constants
         mode_mapping = {
             "generic": brotli.MODE_GENERIC,
