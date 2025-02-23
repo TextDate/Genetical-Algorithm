@@ -116,6 +116,6 @@ class EvolutionVisualizer:
 
 
 # Example usage
-visualiser = EvolutionVisualizer("2000_3136_ga_results/Brotli_ga_results")  # Change to your actual results directory
+visualiser = EvolutionVisualizer("2010_53750_ga_results/AC2_ga_results")  # Change to your actual results directory
 visualiser.plot_best_individuals()
 visualiser.plot_average_fitness()
