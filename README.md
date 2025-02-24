@@ -139,4 +139,4 @@ Genetical-Algorithm-main/
 
 ## Contributions
 
-This work was done under **Investigator Diogo Pratas** and **Professor Armando Pinho** as part of a *Initiation to Investigation Scholarship* on **IEETA**.
+This work was done under **Investigator Diogo Pratas** and **Professor Armando Pinho** as part of an *Initiation to Investigation Scholarship* on **IEETA**.
