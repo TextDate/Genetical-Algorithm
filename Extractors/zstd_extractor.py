@@ -51,17 +51,17 @@ class ZSTDBestParametersExtractor:
         Nicely prints the best compression parameters for each decade in ascending order.
         """
         print("\n" + "-" * 50)
-        print("📌 Optimized ZSTD Compression Parameters by Decade")
+        print("Optimized ZSTD Compression Parameters by Decade")
         print("-" * 50)
 
         # Sort decades in ascending order
         for decade in sorted(best_parameters.keys(), key=lambda x: int(x)):
             params = best_parameters[decade]
 
-            print(f"\n🕰 **Decade: {decade}**")
+            print(f"\n**Decade: {decade}**")
             print("-" * 50)
             for param, value in params.items():
-                print(f"  🔹 {param.capitalize()}: {value}")
+                print(f"  - {param.capitalize()}: {value}")
 
         print("\n" + "-" * 50)
 

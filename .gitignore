@@ -172,3 +172,19 @@ cython_debug/
 .DS_Store
 .idea/
 /temp
+
+# Claude Code Assistant notes (contains system-specific information)
+CLAUDE_NOTES.md
+CLAUDE.md
+temp*/
+test_*/
+Results/*
+logs/*
+ga_results*/
+input_files/*
+.optimized_cache/
+Activity_Plan.pdf
+GA/
+paq8px/
+docs/
+data/

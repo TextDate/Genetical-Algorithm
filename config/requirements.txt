@@ -1,0 +1,98 @@
+# Genetic Algorithm for Compression Parameter Optimization
+# Requirements file with specific versions for reproducible environments
+
+# Core Dependencies (Required)
+# =============================
+
+# Compression libraries
+Brotli==1.1.0                    # Brotli compression algorithm
+zstandard==0.23.0                # Zstandard compression algorithm
+# Note: lzma is built into Python standard library
+
+# Progress and monitoring  
+tqdm==4.67.1                     # Progress bars for long-running operations
+psutil==5.9.8                    # System and process utilities for memory monitoring
+
+# Data processing and analysis
+pandas==2.2.3                    # Data manipulation and analysis
+matplotlib==3.8.4                # Plotting and visualization
+numpy==1.26.4                    # Numerical computing library
+
+# Supporting libraries for matplotlib and pandas
+pillow==11.0.0                   # Image processing library
+pytz==2024.2                     # Timezone definitions
+python-dateutil==2.9.0           # Extensions to datetime module
+six==1.16.0                      # Python 2 and 3 compatibility utilities
+contourpy==1.3.0                 # Contour plotting library
+fonttools==4.53.1               # Font tools for matplotlib
+packaging==24.1                  # Core utilities for Python packages
+pyparsing==3.1.4                # Parsing library
+cycler==0.12.1                  # Composable style cycles
+kiwisolver==1.4.5               # Fast implementation of the Cassowary constraint solver
+
+# Development and Testing
+# =======================
+
+# Testing framework (optional for advanced testing)
+pytest==8.3.3                    # Testing framework
+pytest-cov==5.0.0               # Coverage reporting for tests
+
+# Code quality (optional)
+black==24.8.0                    # Code formatter
+flake8==7.1.1                    # Linting and style checking
+mypy==1.11.2                     # Type checking
+
+# Optional Dependencies for Advanced Features
+# ==========================================
+
+# Scientific computing (if numerical optimization is added)
+scipy==1.14.1                    # Scientific computing library
+
+# Alternative progress bars
+rich==13.8.1                     # Rich text and beautiful formatting
+
+# Memory profiling (for debugging)
+memory-profiler==0.61.0          # Memory usage profiling
+
+# Alternative compression algorithms
+lz4==4.3.3                       # LZ4 compression (fast)
+python-snappy==0.7.3             # Snappy compression
+py7zr==0.22.0                    # 7-Zip compression
+
+# Configuration file handling
+PyYAML==6.0.2                    # YAML configuration files
+toml==0.10.2                     # TOML configuration files
+
+# Database support (for large-scale result storage)
+SQLAlchemy==2.0.35               # SQL toolkit and ORM
+
+# Cluster computing support
+dask==2024.9.1                   # Parallel computing library
+joblib==1.4.2                    # Lightweight pipelining
+
+# Standard Library Modules (No installation needed)
+# =================================================
+# The following modules are part of Python standard library:
+# - concurrent.futures (Python 3.2+)
+# - csv, json, os, sys, time, threading
+# - multiprocessing, subprocess, tempfile
+# - pathlib (Python 3.4+), typing (Python 3.5+)
+# - functools, datetime, math, random
+# - hashlib, gzip, shutil, signal
+# - argparse, unittest, traceback
+# - fcntl (Unix only)
+
+# Version Information
+# ===================
+# This requirements file is compatible with:
+# - Python 3.10.12+
+# - Linux/Unix systems  
+# - SLURM cluster environments
+# 
+# Installation commands:
+# 
+# Full installation:
+# pip install -r requirements.txt
+#
+# Minimal installation (core dependencies only):
+# pip install Brotli==1.1.0 zstandard==0.23.0 tqdm==4.67.1 psutil==5.9.8 pandas==2.2.3 matplotlib==3.8.4 numpy==1.26.4
