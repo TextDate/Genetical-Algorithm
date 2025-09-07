@@ -14,9 +14,6 @@ Features:
 
 Usage:
     python main.py --compressor zstd --param_file config/params.json --input data.txt
-
-Author: Genetic Algorithm Team
-Version: 2.0.0
 """
 
 import os
@@ -127,7 +124,7 @@ def main() -> None:
             if magic == b'\x1f\x8b':  # Gzip magic number
                 is_gzip = True
     except Exception as e:
-        logger.error("Could not read input file to check gzip", exception=e)
+        print(f"Could not read input file to check gzip: {e}")
 
     if is_gzip:
         # Create a dedicated folder for decompressed input files

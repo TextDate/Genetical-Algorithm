@@ -31,6 +31,7 @@ class GeneticAlgorithm:
         # Initialize modular components using config values
         self.parameter_encoder = ParameterEncoder(param_values)
         
+        
         self.population_manager = PopulationManager(
             self.parameter_encoder.param_binary_encodings, 
             config.population_size, 
@@ -232,10 +233,16 @@ class GeneticAlgorithm:
             
             for parent1, parent2 in parent_pairs:
                 # Crossover
-                child1, child2 = self.genetic_operations.crossover(
-                    parent1[0], parent2[0], generation + 1,
+                child1_genes, child2_genes = self.genetic_operations.crossover(
+                    parent1[0][0], parent2[0][0], generation + 1,
                     self.parameter_encoder.param_binary_encodings,
                     self.population_manager.create_individual_name)
+                    
+                # Create full individuals from gene tuples
+                child1_name = self.population_manager.create_individual_name(generation + 1)
+                child2_name = self.population_manager.create_individual_name(generation + 1)
+                child1 = (child1_genes, child1_name)
+                child2 = (child2_genes, child2_name)
                     
                 # Mutation
                 child1 = self.genetic_operations.mutate(child1, generation + 1,

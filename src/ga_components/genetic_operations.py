@@ -98,21 +98,21 @@ class GeneticOperations:
         
         return boundaries
     
-    def _crossover_genes(self, parent1_gene: Tuple[str, ...], parent2_gene: Tuple[str, ...], 
-                        param_boundaries: List[int]) -> Tuple[Tuple[str, ...], Tuple[str, ...]]:
+    def _crossover_genes(self, parent1_gene: str, parent2_gene: str, 
+                        param_boundaries: List[int]) -> Tuple[str, str]:
         """
         Perform uniform crossover on individual genes respecting parameter boundaries.
         
         Args:
-            parent1_gene: First parent's gene tuple
-            parent2_gene: Second parent's gene tuple
+            parent1_gene: First parent's gene string
+            parent2_gene: Second parent's gene string
             param_boundaries: Parameter boundary positions
             
         Returns:
-            Tuple of two crossed-over gene tuples
+            Tuple of two crossed-over gene strings
         """
-        child1_gene = []
-        child2_gene = []
+        child1_gene = ""
+        child2_gene = ""
         
         current_pos = 0
         
@@ -124,15 +124,22 @@ class GeneticOperations:
             
             # Uniform crossover: randomly choose which parent contributes each parameter
             if random.random() < 0.5:
-                child1_gene.extend(parent1_param)
-                child2_gene.extend(parent2_param)
+                child1_gene += parent1_param
+                child2_gene += parent2_param
             else:
-                child1_gene.extend(parent2_param)
-                child2_gene.extend(parent1_param)
+                child1_gene += parent2_param
+                child2_gene += parent1_param
             
             current_pos = boundary
         
-        return tuple(child1_gene), tuple(child2_gene)
+        # Validate gene lengths before returning
+        expected_length = len(parent1_gene)
+        if len(child1_gene) != expected_length:
+            raise ValueError(f"Crossover error: Child1 gene length {len(child1_gene)} != parent length {expected_length}")
+        if len(child2_gene) != expected_length:
+            raise ValueError(f"Crossover error: Child2 gene length {len(child2_gene)} != parent length {expected_length}")
+        
+        return child1_gene, child2_gene
     
     def mutate(self, individual: Tuple[Tuple[str, ...], str], generation: int, 
               individual_name_generator) -> Tuple[Tuple[str, ...], str]:

@@ -70,6 +70,9 @@ def evaluate_fitness_worker(args: Tuple) -> float:
                 individual_name=individual_name
             )
         
+        # Force use of file-based cache for multiprocessing compatibility
+        compressor.use_optimized_cache = False
+        
         # Evaluate fitness
         fitness = compressor.evaluate(decoded_individual, individual_name)
         
@@ -210,13 +213,14 @@ class EvaluationEngine:
                 decoded_individual = self.population_manager.decode_individual(individual)
                 evaluation_args.append((individual, self.compressor_config, decoded_individual))
             
-            # Dynamic thread scaling
+            # Dynamic thread scaling with safety cap
             if self.enable_dynamic_scaling and self.thread_manager:
                 compressor_type = type(self.compressor).__name__.lower().replace('compressor', '')
                 optimal_threads = self.thread_manager.get_threads_for_workload(
                     len(population), generation, compressor_type
                 )
-                self.max_threads = optimal_threads
+                # Cap threads to reasonable maximum and respect base_max_threads from config
+                self.max_threads = min(optimal_threads, self.base_max_threads, 16)
                 
                 self.logger.info("Dynamic thread scaling applied", 
                                base_max_threads=self.base_max_threads,

@@ -17,6 +17,7 @@ psutil==5.9.8                    # System and process utilities for memory monit
 pandas==2.2.3                    # Data manipulation and analysis
 matplotlib==3.8.4                # Plotting and visualization
 numpy==1.26.4                    # Numerical computing library
+seaborn==0.13.2                  # Statistical data visualization
 
 # Supporting libraries for matplotlib and pandas
 pillow==11.0.0                   # Image processing library

@@ -34,6 +34,7 @@ class PopulationManager:
             population_size: Target population size
             compressor_nr_models: Number of models per individual
         """
+        
         self.param_binary_encodings = param_binary_encodings
         self.population_size = population_size
         self.compressor_nr_models = compressor_nr_models
@@ -58,6 +59,7 @@ class PopulationManager:
         population = []
         seen_signatures = set()
         
+        
         while len(population) < self.population_size:
             # Generate individual
             individual = self._create_random_individual(1)
@@ -78,6 +80,8 @@ class PopulationManager:
                 break
         
         self.stats['populations_initialized'] += 1
+        
+        
         return population
     
     def _create_random_individual(self, generation: int) -> Tuple[Tuple[str, ...], str]:
@@ -97,9 +101,28 @@ class PopulationManager:
             gene = ''
             
             # Build gene by concatenating binary representations
+            expected_params = len(self.param_binary_encodings)
+            expected_bits = sum(enc['bit_length'] for enc in self.param_binary_encodings.values())
+            
+            
+            param_count = 0
             for param, encodings in self.param_binary_encodings.items():
+                param_count += 1
                 value_idx = random.randint(0, len(encodings['values']) - 1)
-                gene += encodings['binary_map'][value_idx]
+                param_bits = encodings['binary_map'][value_idx]
+                gene += param_bits
+                
+            
+            # Validate gene was created correctly
+            if len(gene) != expected_bits:
+                raise ValueError(f"Gene creation failed: expected {expected_bits} bits but got {len(gene)} bits. "
+                               f"Processed {param_count}/{expected_params} parameters. Gene: '{gene}'. "
+                               f"Available params: {list(self.param_binary_encodings.keys())}")
+            
+            # Validate we processed all parameters
+            if param_count != expected_params:
+                raise ValueError(f"Gene creation incomplete: processed {param_count}/{expected_params} parameters")
+            
             
             gene_code.append(gene)
         
@@ -176,6 +199,9 @@ class PopulationManager:
                 binary_value = gene[current_pos:current_pos + bit_length]
                 
                 # Convert binary to value index
+                if not binary_value:
+                    raise ValueError(f"Empty binary value for parameter '{param}' at position {current_pos} in gene: {gene}")
+                
                 value_idx = int(binary_value, 2)
                 
                 # Validate index and correct if needed

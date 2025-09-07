@@ -55,7 +55,7 @@ class ParameterEncoder:
                 raise ValueError(f"Parameter '{param}' must have a non-empty list of values")
             
             # Calculate required bits for this parameter
-            num_bits = max(1, len(bin(len(values) - 1)[2:]))  # At least 1 bit
+            num_bits = len(bin(len(values) - 1)[2:])  # Number of bits required
             
             # Create binary representations
             binary_representations = {}
@@ -197,6 +197,9 @@ class ParameterEncoder:
             binary_value = binary_string[current_pos:current_pos + bit_length]
             
             # Convert binary to value index
+            if not binary_value:
+                raise ValueError(f"Empty binary value for parameter '{param_name}' at position {current_pos}")
+            
             value_index = int(binary_value, 2)
             
             # Validate and clamp index

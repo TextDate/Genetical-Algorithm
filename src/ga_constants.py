@@ -128,21 +128,24 @@ DEFAULT_TIMEOUT = CompressionTimeouts.DEFAULT_TIMEOUT_SECONDS
 CHUNK_SIZE = GAConstants.CHUNK_SIZE_BYTES
 
 
-def get_compression_timeout(compressor_type: str, params: Dict = None) -> int:
+def get_compression_timeout(compressor_type: str, params: Dict = None, file_size_mb: float = None) -> int:
     """
-    Get appropriate timeout for compression based on type and parameters.
+    Get appropriate timeout for compression based on type, parameters, and file size.
     
     Args:
         compressor_type: Type of compressor ('zstd', 'lzma', 'brotli', 'paq8')
         params: Compression parameters (optional)
+        file_size_mb: Input file size in MB (optional, enables scaling)
         
     Returns:
         Timeout in seconds
     """
+    # First, determine base timeout based on compressor type and parameters
     if compressor_type.lower() == 'zstd':
         if params and params.get('level', 0) > CompressionTimeouts.ZSTD_LEVEL_THRESHOLD:
-            return CompressionTimeouts.ZSTD_SLOW_TIMEOUT
-        return CompressionTimeouts.ZSTD_FAST_TIMEOUT
+            base_timeout = CompressionTimeouts.ZSTD_SLOW_TIMEOUT
+        else:
+            base_timeout = CompressionTimeouts.ZSTD_FAST_TIMEOUT
         
     elif compressor_type.lower() == 'lzma':
         if params:
@@ -150,10 +153,13 @@ def get_compression_timeout(compressor_type: str, params: Dict = None) -> int:
             nice_len = params.get('nice_len', 0)
             if (dict_size >= CompressionTimeouts.LZMA_DICT_SIZE_THRESHOLD or 
                 nice_len >= CompressionTimeouts.LZMA_NICE_LEN_THRESHOLD):
-                return CompressionTimeouts.LZMA_SLOW_TIMEOUT
+                base_timeout = CompressionTimeouts.LZMA_SLOW_TIMEOUT
             elif dict_size > 0 or nice_len > 0:
-                return CompressionTimeouts.LZMA_MEDIUM_TIMEOUT
-        return CompressionTimeouts.LZMA_FAST_TIMEOUT
+                base_timeout = CompressionTimeouts.LZMA_MEDIUM_TIMEOUT
+            else:
+                base_timeout = CompressionTimeouts.LZMA_FAST_TIMEOUT
+        else:
+            base_timeout = CompressionTimeouts.LZMA_FAST_TIMEOUT
         
     elif compressor_type.lower() == 'brotli':
         if params:
@@ -161,16 +167,47 @@ def get_compression_timeout(compressor_type: str, params: Dict = None) -> int:
             window = params.get('window', 0)
             if (quality > CompressionTimeouts.BROTLI_QUALITY_THRESHOLD or 
                 window > CompressionTimeouts.BROTLI_WINDOW_THRESHOLD):
-                return CompressionTimeouts.BROTLI_SLOW_TIMEOUT
+                base_timeout = CompressionTimeouts.BROTLI_SLOW_TIMEOUT
             elif quality > 0 or window > 0:
-                return CompressionTimeouts.BROTLI_MEDIUM_TIMEOUT
-        return CompressionTimeouts.BROTLI_FAST_TIMEOUT
+                base_timeout = CompressionTimeouts.BROTLI_MEDIUM_TIMEOUT
+            else:
+                base_timeout = CompressionTimeouts.BROTLI_FAST_TIMEOUT
+        else:
+            base_timeout = CompressionTimeouts.BROTLI_FAST_TIMEOUT
         
     elif compressor_type.lower() == 'paq8':
-        return CompressionTimeouts.PAQ8_TIMEOUT
+        base_timeout = CompressionTimeouts.PAQ8_TIMEOUT
         
     else:
-        return CompressionTimeouts.DEFAULT_TIMEOUT_SECONDS
+        base_timeout = CompressionTimeouts.DEFAULT_TIMEOUT_SECONDS
+    
+    # Apply file-size-aware timeout scaling if file size is provided
+    if file_size_mb is not None and file_size_mb > 10:  # Only scale for files > 10MB
+        # File size scaling factors:
+        # 10-50MB: 1-2x multiplier
+        # 50-100MB: 2-4x multiplier  
+        # 100-500MB: 4-10x multiplier
+        # 500MB+: 10-20x multiplier
+        
+        if file_size_mb <= 50:
+            # Linear scaling from 1x to 2x for 10-50MB
+            scale_factor = 1.0 + (file_size_mb - 10) / 40.0
+        elif file_size_mb <= 100:
+            # Linear scaling from 2x to 4x for 50-100MB  
+            scale_factor = 2.0 + 2.0 * (file_size_mb - 50) / 50.0
+        elif file_size_mb <= 500:
+            # Linear scaling from 4x to 10x for 100-500MB
+            scale_factor = 4.0 + 6.0 * (file_size_mb - 100) / 400.0
+        else:
+            # Linear scaling from 10x to 20x for 500MB+
+            scale_factor = 10.0 + 10.0 * min(file_size_mb - 500, 1500) / 1500.0
+            scale_factor = min(scale_factor, 20.0)  # Cap at 20x
+        
+        scaled_timeout = int(base_timeout * scale_factor)
+        # Cap maximum timeout at 2 hours for safety
+        return min(scaled_timeout, 7200)
+    
+    return base_timeout
 
 
 def bytes_to_mb(bytes_value: int) -> float:

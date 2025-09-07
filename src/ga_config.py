@@ -38,10 +38,10 @@ class GAConfig:
     
     # Algorithm Optimization Features
     enable_adaptive_tuning: bool = True
-    enable_smart_initialization: bool = True
+    enable_smart_initialization: bool = False
     enable_convergence_acceleration: bool = True
     enable_performance_monitoring: bool = True
-    enable_dynamic_thread_scaling: bool = True
+    enable_dynamic_thread_scaling: bool = False
     diversity_strategy: str = "hybrid"  # "random", "structured", "hybrid"
     
     def __post_init__(self):

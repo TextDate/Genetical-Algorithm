@@ -33,8 +33,12 @@ class BrotliCompressor(BaseCompressor):
 
     def evaluate(self, params_list, name):
         """Evaluate Brotli compression efficiency with caching and timeout."""
-        # Get appropriate timeout based on Brotli complexity
-        timeout_seconds = get_compression_timeout('brotli', params_list[0])
+        # Get file size for timeout calculation
+        import os
+        file_size_mb = os.path.getsize(self.input_file_path) / (1024 * 1024)
+        
+        # Get appropriate timeout based on Brotli complexity and file size
+        timeout_seconds = get_compression_timeout('brotli', params_list[0], file_size_mb)
         
         return self.evaluate_with_cache(
             compressor_type='brotli',
