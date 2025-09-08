@@ -73,17 +73,26 @@ def evaluate_fitness_worker(args: Tuple) -> float:
         # Force use of file-based cache for multiprocessing compatibility
         compressor.use_optimized_cache = False
         
-        # Evaluate fitness
-        fitness = compressor.evaluate(decoded_individual, individual_name)
+        # Evaluate fitness and get timing
+        result = compressor.evaluate(decoded_individual, individual_name)
+        
+        # Handle tuple return (fitness, compression_time) or just fitness for backward compatibility
+        if isinstance(result, tuple):
+            fitness, compression_time = result
+        else:
+            fitness = result
+            compression_time = 0.0
         
         # Validate fitness result with proper error handling
-        return validate_fitness(fitness, individual_name, min_expected=0.0)
+        validated_fitness = validate_fitness(fitness, individual_name, min_expected=0.0)
+        return validated_fitness, compression_time
             
     except Exception as e:
         # Use standardized error handling
-        return handle_compression_error(
+        fallback_fitness = handle_compression_error(
             e, compressor_config.get('type', 'unknown'), individual_name
         )
+        return fallback_fitness, 0.0  # Return tuple (fitness, time)
 
 
 class EvaluationEngine:
@@ -154,15 +163,22 @@ class EvaluationEngine:
             gene_code, individual_name = individual
             decoded_individual = self.population_manager.decode_individual(individual)
             
-            # Evaluate with proper error context
+            # Evaluate with proper error context and get timing
             compressor_type = type(self.compressor).__name__
-            fitness = self.compressor.evaluate(decoded_individual, individual_name)
+            result = self.compressor.evaluate(decoded_individual, individual_name)
+            
+            # Handle tuple return (fitness, compression_time) or just fitness for backward compatibility
+            if isinstance(result, tuple):
+                fitness, compression_time = result
+            else:
+                fitness = result
+                compression_time = 0.0
             
             # Validate fitness with proper error handling
             validated_fitness = validate_fitness(fitness, individual_name, min_expected=0.0)
             
             self.stats['evaluations_performed'] += 1
-            return validated_fitness
+            return validated_fitness, compression_time
             
         except Exception as e:
             self.stats['evaluation_errors'] += 1
@@ -170,10 +186,11 @@ class EvaluationEngine:
             
             # Use standardized error handling with logging
             self.logger.log_evaluation_error(individual[1], compressor_type, e, using_fallback=True)
-            return handle_compression_error(e, compressor_type, individual[1])
+            fallback_fitness = handle_compression_error(e, compressor_type, individual[1])
+            return fallback_fitness, 0.0  # Return tuple (fitness, time)
     
     def evaluate_population_parallel(self, population: List[Tuple[Tuple[str, ...], str]], 
-                                   generation: int = 0) -> Tuple[List[float], float]:
+                                   generation: int = 0) -> Tuple[List[float], List[float], float]:
         """
         Evaluate entire population in parallel with memory monitoring and dynamic scaling.
         
@@ -182,7 +199,7 @@ class EvaluationEngine:
             generation: Current generation number for dynamic scaling
             
         Returns:
-            Tuple of (fitness_results, peak_memory_gb)
+            Tuple of (fitness_results, compression_times, peak_memory_gb)
         """
         start_time = time.time()
         peak_memory = 0.0
@@ -236,11 +253,24 @@ class EvaluationEngine:
             
             # Parallel evaluation with ProcessPoolExecutor
             with concurrent.futures.ProcessPoolExecutor(max_workers=self.max_threads) as executor:
-                fitness_results = list(
+                evaluation_results = list(
                     tqdm(executor.map(evaluate_fitness_worker, evaluation_args), 
                          total=len(population),
                          desc=f"Evaluating Population ({self.max_threads} workers)")
                 )
+                
+                # Separate fitness values and compression times
+                fitness_results = []
+                compression_times = []
+                for result in evaluation_results:
+                    if isinstance(result, tuple):
+                        fitness, comp_time = result
+                        fitness_results.append(fitness)
+                        compression_times.append(comp_time)
+                    else:
+                        # Backward compatibility for old results
+                        fitness_results.append(result)
+                        compression_times.append(0.0)
             
             # Log successful parallel processing
             evaluation_time = time.time() - start_time
@@ -268,15 +298,24 @@ class EvaluationEngine:
             
             # Fallback to sequential evaluation
             fitness_results = []
+            compression_times = []
             for individual in tqdm(population, desc="Evaluating Population (Sequential)"):
                 try:
-                    fitness_results.append(self.evaluate_fitness(individual))
+                    result = self.evaluate_fitness(individual)
+                    if isinstance(result, tuple):
+                        fitness, comp_time = result
+                        fitness_results.append(fitness)
+                        compression_times.append(comp_time)
+                    else:
+                        fitness_results.append(result)
+                        compression_times.append(0.0)
                 except Exception as eval_error:
                     # Log and use fallback for individual failures
                     self.logger.log_evaluation_error(
                         individual[1], type(self.compressor).__name__, eval_error
                     )
                     fitness_results.append(self.min_fitness)
+                    compression_times.append(0.0)
         finally:
             # Stop memory monitoring
             memory_monitor_active.clear()
@@ -289,7 +328,7 @@ class EvaluationEngine:
         self.stats['total_evaluation_time'] += evaluation_time
         self.stats['peak_memory_usage'] = max(self.stats['peak_memory_usage'], peak_memory)
         
-        return fitness_results, peak_memory
+        return fitness_results, compression_times, peak_memory
     
     def evaluate_batch_sequential(self, population: List[Tuple[Tuple[str, ...], str]]) -> List[float]:
         """

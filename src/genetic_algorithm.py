@@ -139,14 +139,18 @@ class GeneticAlgorithm:
         time.sleep(1)
         
         # Evaluate initial population
-        fitness_results, peak_memory = self.evaluation_engine.evaluate_population_parallel(self.population, generation=0)
+        fitness_results, compression_times, peak_memory = self.evaluation_engine.evaluate_population_parallel(self.population, generation=0)
         population_with_fitness = [(ind, fit) for ind, fit in zip(self.population, fitness_results)]
+        
+        # Store timing data for generation reporting
+        individual_timing_data = compression_times
         
         # Sort by fitness
         self.population = sorted(population_with_fitness, key=lambda x: x[1], reverse=True)
         
-        # Save generation data 
-        self.reporter.save_generation_data(1, self.population, self.population_manager)
+        # Save generation data with timing
+        self.reporter.save_generation_data(1, self.population, self.population_manager, 
+                                         compression_times=individual_timing_data)
         
         # Track convergence
         best_fitness = self.population[0][1]
@@ -219,15 +223,17 @@ class GeneticAlgorithm:
                 self.population = elite_individuals + new_population
                 
                 # Re-evaluate and sort
-                fitness_results, _ = self.evaluation_engine.evaluate_population_parallel(
+                fitness_results, compression_times, _ = self.evaluation_engine.evaluate_population_parallel(
                     [ind for ind, _ in self.population], generation=generation
                 )
                 self.population = [(ind, fit) for (ind, _), fit in zip(self.population, fitness_results)]
+                # Store timing data for this generation
+                individual_timing_data = compression_times
                 self.population = sorted(self.population, key=lambda x: x[1], reverse=True)
             
             # Generate offspring through selection, crossover, and mutation
             offspring = []
-            num_pairs = self.config.num_offspring // 2
+            num_pairs = (self.config.num_offspring + 1) // 2  # Round up to ensure enough offspring
             
             parent_pairs = self.selection_methods.select_parents(self.population, num_pairs)
             
@@ -252,21 +258,48 @@ class GeneticAlgorithm:
                 
                 offspring.extend([child1, child2])
             
+            # Trim excess offspring if we generated too many
+            if len(offspring) > self.config.num_offspring:
+                offspring = offspring[:self.config.num_offspring]
+            
+            # Log offspring count before diversity enforcement
+            self.logger.debug(f"Generated {len(offspring)} offspring before diversity enforcement")
+            
             # Apply diversity enforcement
             offspring = self.duplicate_prevention.enforce_population_diversity(
                 offspring, generation + 1, self.parameter_encoder.param_binary_encodings,
                 self.compressor.nr_models, self.population_manager.create_individual_name)
+                
+            # Log offspring count after diversity enforcement  
+            self.logger.debug(f"Have {len(offspring)} offspring after diversity enforcement")
             
             # Evaluate offspring and select next generation
-            fitness_results, peak_memory = self.evaluation_engine.evaluate_population_parallel(offspring, generation=generation)
+            fitness_results, compression_times, peak_memory = self.evaluation_engine.evaluate_population_parallel(offspring, generation=generation)
             offspring_with_fitness = [(ind, fit) for ind, fit in zip(offspring, fitness_results)]
             
+            # Store timing data for this generation  
+            individual_timing_data = compression_times
+            
             # Elitist selection for next generation
+            prev_pop_size = len(self.population)
+            offspring_size = len(offspring_with_fitness)
             self.population = self.selection_methods.elitist_selection(
                 self.population, offspring_with_fitness, self.config.population_size)
+            final_pop_size = len(self.population)
+            
+            # Log population sizes
+            self.logger.debug(f"Population sizes - Previous: {prev_pop_size}, Offspring: {offspring_size}, "
+                            f"Target: {self.config.population_size}, Final: {final_pop_size}")
+            
+            # Re-evaluate final population to get correct timing data
+            # (This is needed because elitist selection combines old population with offspring)
+            final_individuals = [ind for ind, _ in self.population]
+            _, final_compression_times, _ = self.evaluation_engine.evaluate_population_parallel(
+                final_individuals, generation=generation)
                 
-            # Save generation data
-            self.reporter.save_generation_data(generation + 1, self.population, self.population_manager)
+            # Save generation data with correct timing
+            self.reporter.save_generation_data(generation + 1, self.population, self.population_manager,
+                                             compression_times=final_compression_times)
             
             # Track convergence
             best_fitness = self.population[0][1]

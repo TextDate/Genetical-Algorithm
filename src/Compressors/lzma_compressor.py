@@ -64,7 +64,7 @@ class LzmaCompressor(BaseCompressor):
         # Get appropriate timeout based on LZMA complexity and file size
         timeout_seconds = get_compression_timeout('lzma', params_list[0], file_size_mb)
         
-        return self.evaluate_with_cache(
+        return self.evaluate_with_cache_and_timing(
             compressor_type='lzma',
             params=params_list[0],  # Extract first parameter set
             name=name,

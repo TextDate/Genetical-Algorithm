@@ -109,8 +109,8 @@ class MultiprocessCache:
         except OSError:
             return False
     
-    def get(self, compressor_type: str, params: Dict[str, Any], input_file_path: str) -> Optional[float]:
-        """Retrieve cached compression ratio if available."""
+    def get(self, compressor_type: str, params: Dict[str, Any], input_file_path: str) -> Optional[Tuple[float, float]]:
+        """Retrieve cached compression ratio and time if available."""
         cache_key = self._generate_cache_key(compressor_type, params, input_file_path)
         cache_file = self._get_cache_file_path(cache_key)
         
@@ -122,7 +122,10 @@ class MultiprocessCache:
                     try:
                         data = json.load(f)
                         self._update_stats(hits=1)
-                        return data.get('result')
+                        # Return tuple (fitness, time) for backward compatibility
+                        result = data.get('result')
+                        compression_time = data.get('compression_time', 0.0)  # Default to 0.0 for old cache entries
+                        return (result, compression_time)
                     finally:
                         fcntl.flock(f.fileno(), fcntl.LOCK_UN)
             else:
@@ -132,8 +135,8 @@ class MultiprocessCache:
             self._update_stats(misses=1)
             return None
     
-    def set(self, compressor_type: str, params: Dict[str, Any], input_file_path: str, result: float) -> None:
-        """Cache a compression result."""
+    def set(self, compressor_type: str, params: Dict[str, Any], input_file_path: str, result: float, compression_time: float = 0.0) -> None:
+        """Cache a compression result with timing."""
         if result is None or result <= 0:
             return  # Don't cache invalid results
         
@@ -146,6 +149,7 @@ class MultiprocessCache:
         try:
             cache_data = {
                 'result': result,
+                'compression_time': compression_time,
                 'timestamp': time.time(),
                 'compressor': compressor_type,
                 'input_file': input_file_path

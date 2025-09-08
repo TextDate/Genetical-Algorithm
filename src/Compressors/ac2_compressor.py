@@ -37,20 +37,30 @@ class AC2Compressor(BaseCompressor):
         return command
 
     def evaluate(self, params_list, name):
-        """Compress the input file using AC2."""
-        if not os.path.exists(self.temp):
-            os.makedirs(self.temp)
+        """Compress the input file using AC2 with timing."""
+        import time
+        start_time = time.time()
+        
+        try:
+            if not os.path.exists(self.temp):
+                os.makedirs(self.temp)
 
-        copy_file_path = os.path.join(self.temp, f"{name}.txt")
-        shutil.copyfile(self.input_file_path, copy_file_path)
+            copy_file_path = os.path.join(self.temp, f"{name}.txt")
+            shutil.copyfile(self.input_file_path, copy_file_path)
 
-        compression_ratio = self._run_compression_with_params(params_list, copy_file_path)
-        if compression_ratio is None:
-            print(f"Compression failed for {name}.")
-            sys.stdout.flush()
-            return None
+            compression_ratio = self._run_compression_with_params(params_list, copy_file_path)
+            compression_time = time.time() - start_time
+            
+            if compression_ratio is None:
+                print(f"Compression failed for {name}.")
+                sys.stdout.flush()
+                return None, compression_time
 
-        return compression_ratio
+            return compression_ratio, compression_time
+        except Exception as e:
+            compression_time = time.time() - start_time
+            print(f"AC2 compression error for {name}: {e}")
+            return None, compression_time
 
     def _run_compression_with_params(self, params_list, input_file_path):
         """Run AC2 compression and compute compression ratio."""

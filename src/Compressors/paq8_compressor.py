@@ -22,10 +22,19 @@ class PAQ8Compressor(BaseCompressor):
 
     def evaluate(self, params_list, name):
         """
-        Evaluate the compression efficiency using PAQ8.
+        Evaluate the compression efficiency using PAQ8 with timing.
         Only the first params set is used since PAQ8 is single-run.
         """
-        return self._run_compression_with_params(params_list[0], name)
+        import time
+        start_time = time.time()
+        
+        try:
+            compression_ratio = self._run_compression_with_params(params_list[0], name)
+            compression_time = time.time() - start_time
+            return compression_ratio, compression_time
+        except Exception as e:
+            compression_time = time.time() - start_time
+            raise e  # Re-raise the exception after recording time
 
     def _run_compression_with_params(self, params, name):
         """

@@ -101,7 +101,8 @@ class GAReporter:
             self.logger.info(log_message)
     
     def save_generation_data(self, generation: int, population_with_fitness: List[Tuple[Any, float]], 
-                           population_manager: Any, additional_data: Dict[str, Any] = None):
+                           population_manager: Any, additional_data: Dict[str, Any] = None, 
+                           compression_times: List[float] = None):
         """
         Save generation data to CSV and update tracking.
         
@@ -148,18 +149,21 @@ class GAReporter:
                     param_names = list(decoded[0].keys()) if decoded[0] else []
                     
                     # Header
-                    header = ['Individual_Name', 'Fitness'] + param_names
+                    header = ['Individual_Name', 'Fitness', 'Compression_Time'] + param_names
                     writer.writerow(header)
                     
                     # Data rows
-                    for individual, fitness in population_with_fitness:
+                    for i, (individual, fitness) in enumerate(population_with_fitness):
                         decoded_individual = population_manager.decode_individual(individual)
                         individual_name = individual[1] if len(individual) > 1 else f"Ind_{hash(individual[0])}"
                         
                         # Use first model's parameters (assuming single model)
                         params = decoded_individual[0] if decoded_individual else {}
                         
-                        row = [individual_name, fitness] + [params.get(param, 'N/A') for param in param_names]
+                        # Get compression time for this individual
+                        compression_time = compression_times[i] if compression_times and i < len(compression_times) else 0.0
+                        
+                        row = [individual_name, fitness, compression_time] + [params.get(param, 'N/A') for param in param_names]
                         writer.writerow(row)
         
         # Log generation summary

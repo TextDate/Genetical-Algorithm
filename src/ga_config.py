@@ -107,8 +107,9 @@ class GAConfig:
     
     @property
     def num_offspring(self) -> int:
-        """Calculate number of offspring based on population size and ratio."""
-        return int(self.population_size * self.offspring_ratio)
+        """Calculate number of offspring needed to fill population after elites."""
+        # We need enough offspring to fill the remaining slots after elites are preserved
+        return self.population_size - self.num_elites
     
     @property
     def num_elites(self) -> int:

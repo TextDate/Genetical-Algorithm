@@ -384,12 +384,22 @@ class DuplicatePreventionSystem:
                 # Decide whether to enforce uniqueness for this duplicate
                 if self.should_enforce_uniqueness(generation, duplicate_count):
                     # Generate a unique replacement
-                    unique_individual = self.generate_unique_individual(
-                        seen_signatures, generation, param_binary_encodings, 
-                        compressor_nr_models, individual_name_generator, population)
-                    processed_population.append(unique_individual)
-                    seen_signatures.add(self.individual_to_signature(unique_individual))
-                    enforced_count += 1
+                    try:
+                        unique_individual = self.generate_unique_individual(
+                            seen_signatures, generation, param_binary_encodings, 
+                            compressor_nr_models, individual_name_generator, population)
+                        if unique_individual:
+                            processed_population.append(unique_individual)
+                            seen_signatures.add(self.individual_to_signature(unique_individual))
+                            enforced_count += 1
+                        else:
+                            # Fallback: keep the duplicate if we can't generate unique one
+                            processed_population.append(individual)
+                            allowed_count += 1
+                    except Exception as e:
+                        self.logger.warning(f"Failed to generate unique individual: {e}, keeping duplicate")
+                        processed_population.append(individual)
+                        allowed_count += 1
                 else:
                     # Allow the duplicate
                     processed_population.append(individual)
@@ -417,6 +427,11 @@ class DuplicatePreventionSystem:
                              phase=phase,
                              enforcement_prob=f"{enforcement_prob:.2f}",
                              density=f"{density:.4f}")
+        
+        # Verify population size is maintained
+        if len(processed_population) != len(population):
+            self.logger.warning(f"Population size changed during duplicate prevention: "
+                              f"{len(population)} → {len(processed_population)}")
         
         return processed_population
     

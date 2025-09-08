@@ -159,16 +159,21 @@ class BaseCompressor:
             if cached_result is not None:
                 return cached_result
         
-        # Cache miss - perform actual compression with timeout
+        # Cache miss - perform actual compression with timeout and timing
+        import time
+        compression_start_time = time.time()
         try:
             with self.timeout(timeout_seconds):
                 result = evaluate_func(params, name)
+            compression_time = time.time() - compression_start_time
         except TimeoutError:
+            compression_time = timeout_seconds  # Record timeout duration
             self.logger.warning("Compression timed out", 
                                timeout_seconds=timeout_seconds,
                                name=name, compressor_type=compressor_type)
             return None
         except Exception as e:
+            compression_time = time.time() - compression_start_time
             self.logger.error("Unexpected error during compression", 
                              name=name, compressor_type=compressor_type,
                              exception=e)
@@ -185,3 +190,63 @@ class BaseCompressor:
                 cache.set(compressor_type, params, self.input_file_path, result)
         
         return result
+    
+    def evaluate_with_cache_and_timing(self, compressor_type: str, params: dict, name: str, evaluate_func, timeout_seconds: int = DEFAULT_TIMEOUT):
+        """
+        Evaluate compression with caching and timeout protection, returning both fitness and timing.
+        
+        Args:
+            compressor_type: Name of the compressor (e.g., 'zstd', 'lzma')
+            params: Parameter dictionary for compression
+            name: Individual name for logging
+            evaluate_func: Function to call if cache miss occurs
+            timeout_seconds: Maximum time to wait for compression (default: 30s)
+        
+        Returns:
+            Tuple of (compression_ratio, compression_time) or (None, 0) if evaluation failed
+        """
+        # Check cache first (use optimized cache if available)
+        if self.use_optimized_cache:
+            optimized_cache = get_optimized_cache_manager()
+            cached_result = optimized_cache.get(compressor_type, params, self.input_file_path)
+            if cached_result is not None:
+                return cached_result  # Returns (fitness, original_compression_time)
+        else:
+            # Fallback to original cache
+            cache = get_global_cache()
+            cached_result = cache.get(compressor_type, params, self.input_file_path)
+            if cached_result is not None:
+                return cached_result  # Returns (fitness, original_compression_time)
+        
+        # Cache miss - perform actual compression with timeout and timing
+        import time
+        compression_start_time = time.time()
+        try:
+            with self.timeout(timeout_seconds):
+                result = evaluate_func(params, name)
+            compression_time = time.time() - compression_start_time
+        except TimeoutError:
+            compression_time = timeout_seconds  # Record timeout duration
+            self.logger.warning("Compression timed out", 
+                               timeout_seconds=timeout_seconds,
+                               name=name, compressor_type=compressor_type)
+            return None, compression_time
+        except Exception as e:
+            compression_time = time.time() - compression_start_time
+            self.logger.error("Unexpected error during compression", 
+                             name=name, compressor_type=compressor_type,
+                             exception=e)
+            return None, compression_time
+        
+        # Cache the result if valid
+        if result is not None and result > 0:
+            if self.use_optimized_cache:
+                optimized_cache = get_optimized_cache_manager()
+                optimized_cache.put(compressor_type, params, self.input_file_path, result, 
+                                   compressed_size=0, compression_time=compression_time)
+            else:
+                # Fallback to original cache
+                cache = get_global_cache()
+                cache.set(compressor_type, params, self.input_file_path, result, compression_time)
+        
+        return result, compression_time

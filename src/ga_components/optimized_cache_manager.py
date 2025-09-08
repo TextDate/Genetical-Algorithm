@@ -59,8 +59,8 @@ class CompressorCache:
         self.stats = CacheStats()
         self.logger = get_logger(f"Cache-{compressor_type}")
         
-    def get(self, key: str) -> Optional[float]:
-        """Get value from cache, updating access statistics."""
+    def get(self, key: str) -> Optional[Tuple[float, float]]:
+        """Get value and compression time from cache, updating access statistics."""
         with self.access_lock:
             if key in self.cache:
                 entry = self.cache[key]
@@ -68,7 +68,7 @@ class CompressorCache:
                 # Move to end (most recently used)
                 self.cache.move_to_end(key)
                 self.stats.hits += 1
-                return entry.value
+                return (entry.value, entry.compression_time)
             else:
                 self.stats.misses += 1
                 return None
@@ -268,8 +268,8 @@ class OptimizedCacheManager:
         return self.caches[compressor_key]
     
     def get(self, compressor_type: str, params: Dict[str, Any], 
-           input_file_path: str) -> Optional[float]:
-        """Get cached compression result."""
+           input_file_path: str) -> Optional[Tuple[float, float]]:
+        """Get cached compression result and timing."""
         cache_key = self._get_cache_key(compressor_type, params, input_file_path)
         cache = self.get_cache_for_compressor(compressor_type)
         

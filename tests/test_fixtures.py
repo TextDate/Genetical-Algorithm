@@ -67,11 +67,18 @@ class TestFixtures:
         mock.nr_models = nr_models
         mock.__class__.__name__ = compressor_type
         
-        # Set up evaluate method - always return successful fitness
+        # Set up evaluate method - return tuple (fitness, compression_time)
         if fitness_values:
-            mock.evaluate.side_effect = fitness_values
+            # Convert fitness values to tuples if needed
+            tuple_values = []
+            for value in fitness_values:
+                if isinstance(value, tuple):
+                    tuple_values.append(value)
+                else:
+                    tuple_values.append((value, 0.1))  # Add mock timing
+            mock.evaluate.side_effect = tuple_values
         else:
-            mock.evaluate.return_value = 2.5  # Default fitness
+            mock.evaluate.return_value = (2.5, 0.1)  # Default fitness with timing
             
         # Set up other methods
         mock.erase_temp_files.return_value = None
@@ -168,7 +175,7 @@ class MockCompressorFactory:
     def create_reliable_compressor(base_fitness: float = 2.0) -> Mock:
         """Create compressor that always returns valid fitness."""
         mock = TestFixtures.create_mock_compressor()
-        mock.evaluate.return_value = base_fitness
+        mock.evaluate.return_value = (base_fitness, 0.1)  # Return tuple (fitness, time)
         return mock
     
     @staticmethod 
