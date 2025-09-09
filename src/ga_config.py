@@ -7,7 +7,7 @@ Replaces the 12+ parameter constructor with a single config object.
 
 import os
 from dataclasses import dataclass
-from typing import Any
+from typing import Any, Dict
 from ga_constants import GAConstants
 
 
@@ -43,6 +43,15 @@ class GAConfig:
     enable_performance_monitoring: bool = True
     enable_dynamic_thread_scaling: bool = False
     diversity_strategy: str = "hybrid"  # "random", "structured", "hybrid"
+    
+    # Multi-Objective Evaluation Configuration
+    enable_multi_objective: bool = True
+    fitness_weight: float = 0.7          # Weight for compression ratio (0-1)
+    time_weight: float = 0.3             # Weight for compression time (0-1)
+    normalize_time: bool = True          # Normalize time values to [0,1] range
+    enable_time_penalty: bool = True     # Enable/disable time penalty system
+    time_penalty_threshold: float = 10.0 # Time threshold in seconds for penalty
+    additional_objectives: Dict[str, float] = None  # For future extensibility
     
     def __post_init__(self):
         """Validate user parameters after initialization."""
@@ -81,6 +90,17 @@ class GAConfig:
         # Directory validation
         if not self.output_dir or not self.output_dir.strip():
             errors.append("Output directory cannot be empty")
+        
+        # Multi-objective evaluation validation
+        if self.enable_multi_objective:
+            if not 0.0 <= self.fitness_weight <= 1.0:
+                errors.append(f"Fitness weight ({self.fitness_weight}) must be between 0.0 and 1.0")
+            if not 0.0 <= self.time_weight <= 1.0:
+                errors.append(f"Time weight ({self.time_weight}) must be between 0.0 and 1.0")
+            if abs(self.fitness_weight + self.time_weight - 1.0) > 0.001:
+                errors.append(f"Fitness weight ({self.fitness_weight}) + Time weight ({self.time_weight}) must sum to 1.0")
+            if self.enable_time_penalty and self.time_penalty_threshold <= 0:
+                errors.append(f"Time penalty threshold ({self.time_penalty_threshold}) must be positive when penalties are enabled")
             
         if errors:
             raise ValueError("Configuration validation failed:\n" + "\n".join(f"  • {error}" for error in errors))
@@ -118,12 +138,26 @@ class GAConfig:
     
     def summary(self) -> str:
         """Generate human-readable configuration summary."""
-        return f"""GA Configuration:
+        summary = f"""GA Configuration:
   Population: {self.population_size} (offspring: {self.num_offspring}, elites: {self.num_elites})
   Generations: {self.generations}
   Rates: mutation={self.mutation_rate:.3f}, crossover={self.crossover_rate:.3f}
   Threads: {self.max_threads}
   Output: {self.output_dir}"""
+        
+        if self.enable_multi_objective:
+            summary += f"""
+  Multi-Objective Evaluation:
+    Fitness weight: {self.fitness_weight:.3f}
+    Time weight: {self.time_weight:.3f}
+    Time penalties: {'enabled' if self.enable_time_penalty else 'disabled'}"""
+            if self.enable_time_penalty:
+                summary += f"""
+    Time penalty threshold: {self.time_penalty_threshold:.1f}s"""
+        else:
+            summary += "\n  Evaluation: Single-objective (fitness only)"
+        
+        return summary
     
     def __str__(self) -> str:
         return f"GAConfig(pop={self.population_size}, gen={self.generations}, threads={self.max_threads})"

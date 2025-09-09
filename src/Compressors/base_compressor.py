@@ -216,7 +216,10 @@ class BaseCompressor:
             cache = get_global_cache()
             cached_result = cache.get(compressor_type, params, self.input_file_path)
             if cached_result is not None:
+                self.logger.debug(f"Cache HIT for {name}: {cached_result}")
                 return cached_result  # Returns (fitness, original_compression_time)
+            else:
+                self.logger.debug(f"Cache MISS for {name}, parameters: {params}")
         
         # Cache miss - perform actual compression with timeout and timing
         import time

@@ -26,6 +26,7 @@ from ga_exceptions import (
 from ga_logging import get_logger
 from ga_components.dynamic_thread_manager import get_thread_manager
 from ga_components.compressor_registry import create_compressor_config
+from ga_components.multi_objective_evaluator import MultiObjectiveEvaluator, ObjectiveWeights
 
 
 def evaluate_fitness_worker(args: Tuple) -> float:
@@ -104,7 +105,7 @@ class EvaluationEngine:
     """
     
     def __init__(self, compressor: Any, population_manager: Any, max_threads: int = 8, 
-                 min_fitness: float = 0.1, enable_dynamic_scaling: bool = True):
+                 min_fitness: float = 0.1, enable_dynamic_scaling: bool = True, config: Any = None):
         """
         Initialize evaluation engine.
         
@@ -114,6 +115,7 @@ class EvaluationEngine:
             max_threads: Maximum number of parallel threads (used as base limit for dynamic scaling)
             min_fitness: Minimum fitness for failed evaluations
             enable_dynamic_scaling: Whether to use dynamic thread scaling
+            config: GAConfig instance for multi-objective evaluation settings
         """
         self.compressor = compressor
         self.population_manager = population_manager
@@ -121,6 +123,7 @@ class EvaluationEngine:
         self.max_threads = max_threads  # This will be dynamically updated
         self.min_fitness = min_fitness
         self.enable_dynamic_scaling = enable_dynamic_scaling
+        self.config = config
         
         # Initialize thread manager if dynamic scaling enabled
         if self.enable_dynamic_scaling:
@@ -128,6 +131,24 @@ class EvaluationEngine:
         else:
             self.thread_manager = None
         self.logger = get_logger("EvaluationEngine")
+        
+        # Initialize multi-objective evaluator if configured
+        self.multi_objective_evaluator = None
+        if config and hasattr(config, 'enable_multi_objective') and config.enable_multi_objective:
+            weights = ObjectiveWeights(
+                fitness_weight=config.fitness_weight,
+                time_weight=config.time_weight,
+                additional_weights=config.additional_objectives or {}
+            )
+            self.multi_objective_evaluator = MultiObjectiveEvaluator(
+                weights=weights,
+                normalize_time=config.normalize_time,
+                enable_time_penalty=config.enable_time_penalty,
+                time_penalty_threshold=config.time_penalty_threshold
+            )
+            self.logger.info("Multi-objective evaluation enabled",
+                           fitness_weight=config.fitness_weight,
+                           time_weight=config.time_weight)
         
         # Create serializable compressor config for ProcessPoolExecutor using registry
         self.compressor_config = create_compressor_config(compressor)
@@ -200,6 +221,9 @@ class EvaluationEngine:
             
         Returns:
             Tuple of (fitness_results, compression_times, peak_memory_gb)
+            - fitness_results: Combined multi-objective scores if enabled, otherwise raw compression ratios
+            - compression_times: Individual compression times for reporting
+            - peak_memory_gb: Peak memory usage during evaluation
         """
         start_time = time.time()
         peak_memory = 0.0
@@ -207,14 +231,31 @@ class EvaluationEngine:
         memory_monitor_active.set()
         
         def track_memory():
-            """Background thread to monitor memory usage."""
+            """Background thread to monitor memory usage across all processes."""
             nonlocal peak_memory
             while memory_monitor_active.is_set():
                 try:
-                    process = psutil.Process()
-                    memory_gb = process.memory_info().rss / 1024**3
+                    # Get main process
+                    main_process = psutil.Process()
+                    total_memory = main_process.memory_info().rss
+                    
+                    # Add memory from all child processes (worker processes)
+                    try:
+                        children = main_process.children(recursive=True)
+                        for child in children:
+                            try:
+                                total_memory += child.memory_info().rss
+                            except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
+                                # Child process may have terminated
+                                continue
+                    except (psutil.NoSuchProcess, psutil.AccessDenied):
+                        # Main process issues, but continue with just main process memory
+                        pass
+                    
+                    # Convert to GB and update peak
+                    memory_gb = total_memory / 1024**3
                     peak_memory = max(peak_memory, memory_gb)
-                    time.sleep(0.5)  # Check every 500ms (less frequent than before)
+                    time.sleep(0.1)  # Check every 100ms for better accuracy during intensive operations
                 except (psutil.NoSuchProcess, psutil.AccessDenied):
                     break
         
@@ -321,6 +362,18 @@ class EvaluationEngine:
             memory_monitor_active.clear()
             if memory_thread.is_alive():
                 memory_thread.join(timeout=1)
+        
+        # Apply multi-objective evaluation if enabled
+        if self.multi_objective_evaluator:
+            evaluation_metrics = self.multi_objective_evaluator.evaluate_population(
+                fitness_results, compression_times
+            )
+            # Replace fitness_results with combined multi-objective scores
+            fitness_results = self.multi_objective_evaluator.get_combined_scores(evaluation_metrics)
+            
+            self.logger.debug("Multi-objective evaluation applied",
+                           avg_combined_score=sum(fitness_results) / len(fitness_results) if fitness_results else 0.0,
+                           generation=generation)
         
         # Update statistics
         evaluation_time = time.time() - start_time
@@ -443,6 +496,11 @@ class EvaluationEngine:
             'cache_size': cache_info['current_size']
         })
         
+        # Add multi-objective statistics if enabled
+        if self.multi_objective_evaluator:
+            multi_obj_stats = self.multi_objective_evaluator.get_statistics()
+            stats['multi_objective'] = multi_obj_stats
+        
         # Add derived metrics
         if self.stats['evaluations_performed'] > 0:
             stats['avg_evaluation_time'] = self.stats['total_evaluation_time'] / self.stats['evaluations_performed']
@@ -462,6 +520,10 @@ class EvaluationEngine:
             'total_evaluation_time': 0.0,
             'peak_memory_usage': 0.0
         }
+        
+        # Reset multi-objective statistics if enabled
+        if self.multi_objective_evaluator:
+            self.multi_objective_evaluator.reset_statistics()
     
     def optimize_thread_count(self, sample_population: List[Tuple[Tuple[str, ...], str]]) -> int:
         """

@@ -192,3 +192,5 @@ IMPLEMENTATION_PLAN.md
 analysis_output/
 analysis_results_chemistry/
 Chem_GA/
+logs/
+chemistry_*

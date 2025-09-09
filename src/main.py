@@ -112,6 +112,18 @@ def main() -> None:
     parser.add_argument('--population_size', '-ps',type=int, default=100, help="Population size (default: 100)")
     parser.add_argument('--mutation_rate', '-mr',type=float, default=0.01, help="Mutation rate (default: 0.01)")
     parser.add_argument('--crossover_rate', '-mcr',type=float, default=0.8, help="Crossover rate (default: 0.5)")
+    
+    # Multi-objective evaluation parameters
+    parser.add_argument('--disable_multi_objective', action='store_true', 
+                        help="Disable multi-objective evaluation (use fitness only)")
+    parser.add_argument('--fitness_weight', type=float, default=0.7,
+                        help="Weight for compression ratio in multi-objective evaluation (default: 0.7)")
+    parser.add_argument('--time_weight', type=float, default=0.3,
+                        help="Weight for compression time in multi-objective evaluation (default: 0.3)")
+    parser.add_argument('--disable_time_penalty', action='store_true',
+                        help="Disable time penalty system (use linear time weighting only)")
+    parser.add_argument('--time_penalty_threshold', type=float, default=10.0,
+                        help="Time threshold in seconds for applying penalties (default: 10.0)")
 
     args = parser.parse_args()
 
@@ -146,14 +158,12 @@ def main() -> None:
                 time.sleep(1)
 
             if os.path.exists(decompressed_file) and os.path.getsize(decompressed_file) > 0:
-                logger.info("Input file decompressed", 
-                           decompressed_file=os.path.abspath(decompressed_file))
+                print(f"Input file decompressed: {os.path.abspath(decompressed_file)}")
                 args.input = decompressed_file
             else:
-                logger.warning("Decompressed file not found or empty", 
-                               file=os.path.abspath(decompressed_file))
+                print(f"Warning: Decompressed file not found or empty: {os.path.abspath(decompressed_file)}")
         except Exception as e:
-            logger.error("Failed to decompress gzip file", exception=e)
+            print(f"Error: Failed to decompress gzip file: {e}")
 
     # Load parameters from the file
     parameters = load_parameters(args.param_file)
@@ -186,7 +196,12 @@ def main() -> None:
         mutation_rate=args.mutation_rate,
         crossover_rate=args.crossover_rate,
         max_threads=args.max_threads,
-        output_dir=args.output_dir
+        output_dir=args.output_dir,
+        enable_multi_objective=not args.disable_multi_objective,
+        fitness_weight=args.fitness_weight,
+        time_weight=args.time_weight,
+        enable_time_penalty=not args.disable_time_penalty,
+        time_penalty_threshold=args.time_penalty_threshold
     )
     
     # Setup logging

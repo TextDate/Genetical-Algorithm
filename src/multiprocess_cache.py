@@ -95,7 +95,8 @@ class MultiprocessCache:
         cache_data = f"{compressor_type}|{params_str}|{input_file_path}|{file_size}|{file_mtime}"
         
         # Hash for consistent, filesystem-safe key
-        return hashlib.sha256(cache_data.encode()).hexdigest()[:32]
+        cache_key = hashlib.sha256(cache_data.encode()).hexdigest()[:32]
+        return cache_key
     
     def _get_cache_file_path(self, cache_key: str) -> Path:
         """Get the file path for a cache key."""
@@ -129,6 +130,8 @@ class MultiprocessCache:
                     finally:
                         fcntl.flock(f.fileno(), fcntl.LOCK_UN)
             else:
+                if cache_file.exists():
+                    print(f"  File age check: valid={self._is_cache_entry_valid(cache_file)}")
                 self._update_stats(misses=1)
                 return None
         except (OSError, ValueError):

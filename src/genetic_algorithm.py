@@ -53,7 +53,8 @@ class GeneticAlgorithm:
             self.population_manager,
             max_threads=config.max_threads,
             min_fitness=config.min_fitness,
-            enable_dynamic_scaling=config.enable_dynamic_thread_scaling
+            enable_dynamic_scaling=config.enable_dynamic_thread_scaling,
+            config=config
         )
         
         self.duplicate_prevention = DuplicatePreventionSystem(
@@ -159,10 +160,11 @@ class GeneticAlgorithm:
         # Display best individual
         best_individual = self.population[0][0]
         decoded_best = self._decode_individual_cached(best_individual)
+        best_compression_time = individual_timing_data[0] if individual_timing_data else 0.0
         
         generation_time = time.time() - init_time
         self.logger.log_generation_complete(1, best_fitness, generation_time, peak_memory)
-        self.logger.info(f"Best individual from Initial Generation: {decoded_best}")
+        self.logger.info(f"Best individual from Initial Generation: {decoded_best} (compression time: {best_compression_time:.3f}s)")
         self.logger.info("-" * 100)
         
         # Evolution loop with optimization
@@ -320,10 +322,11 @@ class GeneticAlgorithm:
             # Display progress
             best_individual = self.population[0][0]
             decoded_best = self._decode_individual_cached(best_individual)
+            best_compression_time = final_compression_times[0] if final_compression_times else 0.0
             generation_time = time.time() - init_time
             
             self.logger.log_generation_complete(generation + 1, best_fitness, generation_time, peak_memory)
-            self.logger.info(f"Best individual: {decoded_best}")
+            self.logger.info(f"Best individual: {decoded_best} (compression time: {best_compression_time:.3f}s)")
             
             # Log optimization status
             if generation % 5 == 0:  # Every 5 generations
