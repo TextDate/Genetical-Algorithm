@@ -39,13 +39,24 @@ class ZstdCompressor(BaseCompressor):
         
         # Get appropriate timeout based on compression level and file size
         timeout_seconds = get_compression_timeout('zstd', params_list[0], file_size_mb)
-        return self.evaluate_with_cache_and_timing(
+        result = self.evaluate_with_cache_and_timing(
             compressor_type='zstd',
             params=params_list[0],  # Extract first parameter set
             name=name,
             evaluate_func=lambda params, name: self._run_compression_with_params(params_list, name),
             timeout_seconds=timeout_seconds
         )
+        
+        # Return (fitness, time, ram) tuple
+        if isinstance(result, tuple) and len(result) == 3:
+            return result
+        elif isinstance(result, tuple) and len(result) == 2:
+            # Backward compatibility: add 0.0 for RAM if not available
+            fitness, compression_time = result
+            return fitness, compression_time, 0.0
+        else:
+            # Single value (fitness only)
+            return result, 0.0, 0.0
 
     def _run_compression_with_params(self, params, name):
         """Compress a file using Zstd and compute compression ratio with error handling."""

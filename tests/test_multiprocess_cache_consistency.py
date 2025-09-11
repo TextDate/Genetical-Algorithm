@@ -30,13 +30,22 @@ def test_worker(worker_id, test_file, params, results_queue):
             end_time = time.time()
             
             if isinstance(result, tuple):
-                fitness, compression_time = result
+                if len(result) == 3:
+                    fitness, compression_time, ram_usage = result
+                elif len(result) == 2:
+                    fitness, compression_time = result
+                    ram_usage = 0.0
+                else:
+                    fitness = result[0]
+                    compression_time = end_time - start_time
+                    ram_usage = 0.0
             else:
                 fitness = result
                 compression_time = end_time - start_time
+                ram_usage = 0.0
             
             times.append(compression_time)
-            print(f"Worker {worker_id}, Test {i}: Fitness={fitness:.4f}, Time={compression_time:.3f}s")
+            print(f"Worker {worker_id}, Test {i}: Fitness={fitness:.4f}, Time={compression_time:.3f}s, RAM={ram_usage:.1f}MB")
         
         results_queue.put((worker_id, times))
         

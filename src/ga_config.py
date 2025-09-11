@@ -46,8 +46,9 @@ class GAConfig:
     
     # Multi-Objective Evaluation Configuration
     enable_multi_objective: bool = True
-    fitness_weight: float = 0.7          # Weight for compression ratio (0-1)
+    fitness_weight: float = 0.5          # Weight for compression ratio (0-1)
     time_weight: float = 0.3             # Weight for compression time (0-1)
+    ram_weight: float = 0.2              # Weight for RAM usage (0-1)
     normalize_time: bool = True          # Normalize time values to [0,1] range
     enable_time_penalty: bool = True     # Enable/disable time penalty system
     time_penalty_threshold: float = 10.0 # Time threshold in seconds for penalty
@@ -97,8 +98,17 @@ class GAConfig:
                 errors.append(f"Fitness weight ({self.fitness_weight}) must be between 0.0 and 1.0")
             if not 0.0 <= self.time_weight <= 1.0:
                 errors.append(f"Time weight ({self.time_weight}) must be between 0.0 and 1.0")
-            if abs(self.fitness_weight + self.time_weight - 1.0) > 0.001:
-                errors.append(f"Fitness weight ({self.fitness_weight}) + Time weight ({self.time_weight}) must sum to 1.0")
+            if not 0.0 <= self.ram_weight <= 1.0:
+                errors.append(f"RAM weight ({self.ram_weight}) must be between 0.0 and 1.0")
+            
+            total_weight = self.fitness_weight + self.time_weight + self.ram_weight
+            if abs(total_weight - 1.0) > 0.001:
+                # Check if user is using old default weights (0.7 + 0.3) and auto-adjust
+                if abs(self.fitness_weight - 0.7) < 0.001 and abs(self.time_weight - 0.3) < 0.001:
+                    errors.append(f"Legacy weight configuration detected. Please update to: --fitness_weight 0.5 --time_weight 0.3 --ram_weight 0.2")
+                else:
+                    errors.append(f"All weights must sum to 1.0: fitness_weight ({self.fitness_weight}) + time_weight ({self.time_weight}) + ram_weight ({self.ram_weight}) = {total_weight:.3f}")
+                errors.append(f"Suggested weights: --fitness_weight 0.5 --time_weight 0.3 --ram_weight 0.2")
             if self.enable_time_penalty and self.time_penalty_threshold <= 0:
                 errors.append(f"Time penalty threshold ({self.time_penalty_threshold}) must be positive when penalties are enabled")
             
@@ -150,6 +160,7 @@ class GAConfig:
   Multi-Objective Evaluation:
     Fitness weight: {self.fitness_weight:.3f}
     Time weight: {self.time_weight:.3f}
+    RAM weight: {self.ram_weight:.3f}
     Time penalties: {'enabled' if self.enable_time_penalty else 'disabled'}"""
             if self.enable_time_penalty:
                 summary += f"""

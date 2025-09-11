@@ -4,6 +4,7 @@ import sys
 import time
 import shutil
 import signal
+import psutil
 from contextlib import contextmanager
 from cache import get_global_cache
 from ga_constants import CompressionTimeouts, DEFAULT_TIMEOUT
@@ -126,56 +127,31 @@ class BaseCompressor:
             signal.alarm(0)
             signal.signal(signal.SIGALRM, old_handler)
     
-    def evaluate_with_cache(self, compressor_type: str, params: dict, name: str, evaluate_func, timeout_seconds: int = DEFAULT_TIMEOUT):
-        """
-        Evaluate compression with caching and timeout protection.
+    @contextmanager
+    def ram_monitor(self):
+        """Context manager for monitoring RAM usage during operations."""
+        process = psutil.Process()
+        initial_ram = process.memory_info().rss / (1024 * 1024)  # Convert to MB
+        peak_ram_holder = [initial_ram]  # Use list to allow modification in nested function
         
-        Args:
-            compressor_type: Name of the compressor (e.g., 'zstd', 'lzma')
-            params: Parameter dictionary for compression
-            name: Individual name for logging
-            evaluate_func: Function to call if cache miss occurs
-            timeout_seconds: Maximum time to wait for compression (default: 30s)
+        def get_current_ram():
+            try:
+                current_ram = process.memory_info().rss / (1024 * 1024)  # Convert to MB
+                peak_ram_holder[0] = max(peak_ram_holder[0], current_ram)
+                return current_ram
+            except (psutil.NoSuchProcess, psutil.AccessDenied):
+                return peak_ram_holder[0]
         
-        Returns:
-            Compression ratio or None if evaluation failed or timed out
-        """
-        # Check multiprocess-safe cache first
-        cache = get_global_cache()
-        cached_result = cache.get(compressor_type, params, self.input_file_path)
-        if cached_result is not None:
-            return cached_result
-        
-        # Cache miss - perform actual compression with timeout and timing
-        import time
-        compression_start_time = time.time()
         try:
-            with self.timeout(timeout_seconds):
-                result = evaluate_func(params, name)
-            compression_time = time.time() - compression_start_time
-        except TimeoutError:
-            compression_time = timeout_seconds  # Record timeout duration
-            self.logger.warning("Compression timed out", 
-                               timeout_seconds=timeout_seconds,
-                               name=name, compressor_type=compressor_type)
-            return None
-        except Exception as e:
-            compression_time = time.time() - compression_start_time
-            self.logger.error("Unexpected error during compression", 
-                             name=name, compressor_type=compressor_type,
-                             exception=e)
-            return None
-        
-        # Cache the result if valid
-        if result is not None and result > 0:
-            cache = get_global_cache()
-            cache.set(compressor_type, params, self.input_file_path, result)
-        
-        return result
+            yield get_current_ram
+        finally:
+            # Final check for peak RAM
+            get_current_ram()
+    
     
     def evaluate_with_cache_and_timing(self, compressor_type: str, params: dict, name: str, evaluate_func, timeout_seconds: int = DEFAULT_TIMEOUT):
         """
-        Evaluate compression with caching and timeout protection, returning both fitness and timing.
+        Evaluate compression with caching and timeout protection, returning fitness, timing, and RAM usage.
         
         Args:
             compressor_type: Name of the compressor (e.g., 'zstd', 'lzma')
@@ -185,40 +161,49 @@ class BaseCompressor:
             timeout_seconds: Maximum time to wait for compression (default: 30s)
         
         Returns:
-            Tuple of (compression_ratio, compression_time) or (None, 0) if evaluation failed
+            Tuple of (compression_ratio, compression_time, ram_usage_mb) or (None, 0, 0) if evaluation failed
         """
         # Check multiprocess-safe cache first
         cache = get_global_cache()
         cached_result = cache.get(compressor_type, params, self.input_file_path)
         if cached_result is not None:
             self.logger.debug(f"Cache HIT for {name}: {cached_result}")
-            return cached_result  # Returns (fitness, original_compression_time)
+            # Handle backward compatibility - cached results might be (fitness, time) or (fitness, time, ram)
+            if len(cached_result) == 2:
+                fitness, compression_time = cached_result
+                ram_usage = 0.0  # Default for legacy cache entries
+            else:
+                fitness, compression_time, ram_usage = cached_result
+            return fitness, compression_time, ram_usage
         else:
             self.logger.debug(f"Cache MISS for {name}, parameters: {params}")
         
-        # Cache miss - perform actual compression with timeout and timing
+        # Cache miss - perform actual compression with timeout, timing, and RAM monitoring
         import time
         compression_start_time = time.time()
+        ram_usage = 0.0
+        
         try:
-            with self.timeout(timeout_seconds):
+            with self.timeout(timeout_seconds), self.ram_monitor() as get_ram:
                 result = evaluate_func(params, name)
+                ram_usage = get_ram()  # Get peak RAM usage
             compression_time = time.time() - compression_start_time
         except TimeoutError:
             compression_time = timeout_seconds  # Record timeout duration
             self.logger.warning("Compression timed out", 
                                timeout_seconds=timeout_seconds,
                                name=name, compressor_type=compressor_type)
-            return None, compression_time
+            return None, compression_time, ram_usage
         except Exception as e:
             compression_time = time.time() - compression_start_time
             self.logger.error("Unexpected error during compression", 
                              name=name, compressor_type=compressor_type,
                              exception=e)
-            return None, compression_time
+            return None, compression_time, ram_usage
         
-        # Cache the result if valid
+        # Cache the result if valid (now includes RAM usage)
         if result is not None and result > 0:
             cache = get_global_cache()
-            cache.set(compressor_type, params, self.input_file_path, result, compression_time)
+            cache.set(compressor_type, params, self.input_file_path, result, compression_time, ram_usage)
         
-        return result, compression_time
+        return result, compression_time, ram_usage

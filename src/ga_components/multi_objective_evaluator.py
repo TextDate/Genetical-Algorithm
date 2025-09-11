@@ -191,17 +191,30 @@ class MultiObjectiveEvaluator:
         
         # Calculate additional objective components
         additional_components = {}
+        additional_score = 0.0
+        
         for obj_name, obj_value in additional_objectives.items():
             if obj_name in self.weights.additional_weights:
-                additional_components[obj_name] = max(0.0, obj_value)
+                weight = self.weights.additional_weights[obj_name]
+                obj_component = max(0.0, obj_value)
+                additional_components[obj_name] = obj_component
+                
+                # RAM usage should be minimized (inverted like time), others maximized
+                if obj_name == 'ram':
+                    # Normalize RAM usage similar to time normalization
+                    normalized_ram = self.normalize_ram_value(obj_value) if hasattr(self, 'normalize_ram_value') else obj_value / 1000.0  # Simple normalization by 1GB
+                    additional_score += weight * (1.0 - min(1.0, normalized_ram))
+                else:
+                    # Other objectives are maximized
+                    additional_score += weight * obj_component
         
         # Combine objectives using weighted sum
         # Note: time_component is inverted (1 - time_component) because lower time is better
+        # RAM is also inverted for minimization
         combined_score = (
             self.weights.fitness_weight * fitness_component +
             self.weights.time_weight * (1.0 - time_component) +
-            sum(weight * additional_components.get(obj_name, 0.0) 
-                for obj_name, weight in self.weights.additional_weights.items())
+            additional_score
         )
         
         # Update statistics

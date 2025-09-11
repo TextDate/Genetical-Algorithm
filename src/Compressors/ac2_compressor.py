@@ -2,6 +2,7 @@ import os
 import shutil
 import sys
 from Compressors.base_compressor import BaseCompressor
+from ga_constants import get_compression_timeout
 
 
 class AC2Compressor(BaseCompressor):
@@ -37,30 +38,45 @@ class AC2Compressor(BaseCompressor):
         return command
 
     def evaluate(self, params_list, name):
-        """Compress the input file using AC2 with timing."""
-        import time
-        start_time = time.time()
+        """Compress the input file using AC2 with caching and timeout."""
+        # Get file size for timeout calculation
+        file_size_mb = os.path.getsize(self.input_file_path) / (1024 * 1024)
         
+        # AC2 can be slow, use extended timeout
+        timeout_seconds = max(3600, get_compression_timeout('ac2', params_list[0], file_size_mb))
+        
+        result = self.evaluate_with_cache_and_timing(
+            compressor_type='ac2',
+            params=params_list[0],  # Extract first parameter set
+            name=name,
+            evaluate_func=lambda params, name: self._run_compression_with_ac2_setup(params_list, name),
+            timeout_seconds=timeout_seconds
+        )
+        
+        # Return (fitness, time, ram) tuple
+        if isinstance(result, tuple) and len(result) == 3:
+            return result
+        elif isinstance(result, tuple) and len(result) == 2:
+            # Backward compatibility: add 0.0 for RAM if not available
+            fitness, compression_time = result
+            return fitness, compression_time, 0.0
+        else:
+            # Single value (fitness only)
+            return result, 0.0, 0.0
+    
+    def _run_compression_with_ac2_setup(self, params_list, name):
+        """Set up AC2 compression (handles file copying) and run compression."""
         try:
             if not os.path.exists(self.temp):
                 os.makedirs(self.temp)
 
             copy_file_path = os.path.join(self.temp, f"{name}.txt")
             shutil.copyfile(self.input_file_path, copy_file_path)
-
-            compression_ratio = self._run_compression_with_params(params_list, copy_file_path)
-            compression_time = time.time() - start_time
             
-            if compression_ratio is None:
-                print(f"Compression failed for {name}.")
-                sys.stdout.flush()
-                return None, compression_time
-
-            return compression_ratio, compression_time
+            return self._run_compression_with_params(params_list, copy_file_path)
         except Exception as e:
-            compression_time = time.time() - start_time
             print(f"AC2 compression error for {name}: {e}")
-            return None, compression_time
+            return None
 
     def _run_compression_with_params(self, params_list, input_file_path):
         """Run AC2 compression and compute compression ratio."""

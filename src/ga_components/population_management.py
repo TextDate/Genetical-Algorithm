@@ -204,9 +204,9 @@ class PopulationManager:
                 
                 value_idx = int(binary_value, 2)
                 
-                # Validate index and correct if needed
+                # Validate index and correct if needed (use deterministic correction)
                 if value_idx >= len(encodings['values']):
-                    value_idx = random.randint(0, len(encodings['values']) - 1)
+                    value_idx = len(encodings['values']) - 1  # Use max valid index instead of random
                 
                 decoded_gene[param] = encodings['values'][value_idx]
                 current_pos += bit_length

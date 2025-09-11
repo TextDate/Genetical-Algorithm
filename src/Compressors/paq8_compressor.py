@@ -1,6 +1,7 @@
 import os
 import sys
 from Compressors.base_compressor import BaseCompressor  # Import BaseCompressor
+from ga_constants import get_compression_timeout
 
 class PAQ8Compressor(BaseCompressor):
     def __init__(self, input_file_path, temp="temp"):
@@ -22,19 +23,34 @@ class PAQ8Compressor(BaseCompressor):
 
     def evaluate(self, params_list, name):
         """
-        Evaluate the compression efficiency using PAQ8 with timing.
+        Evaluate the compression efficiency using PAQ8 with caching and timeout.
         Only the first params set is used since PAQ8 is single-run.
         """
-        import time
-        start_time = time.time()
+        # Get file size for timeout calculation
+        import os
+        file_size_mb = os.path.getsize(self.input_file_path) / (1024 * 1024)
         
-        try:
-            compression_ratio = self._run_compression_with_params(params_list[0], name)
-            compression_time = time.time() - start_time
-            return compression_ratio, compression_time
-        except Exception as e:
-            compression_time = time.time() - start_time
-            raise e  # Re-raise the exception after recording time
+        # PAQ8 is very slow, use extended timeout
+        timeout_seconds = max(7200, get_compression_timeout('paq8', params_list[0], file_size_mb))
+        
+        result = self.evaluate_with_cache_and_timing(
+            compressor_type='paq8',
+            params=params_list[0],  # Extract first parameter set
+            name=name,
+            evaluate_func=lambda params, name: self._run_compression_with_params(params_list[0], name),
+            timeout_seconds=timeout_seconds
+        )
+        
+        # Return (fitness, time, ram) tuple
+        if isinstance(result, tuple) and len(result) == 3:
+            return result
+        elif isinstance(result, tuple) and len(result) == 2:
+            # Backward compatibility: add 0.0 for RAM if not available
+            fitness, compression_time = result
+            return fitness, compression_time, 0.0
+        else:
+            # Single value (fitness only)
+            return result, 0.0, 0.0
 
     def _run_compression_with_params(self, params, name):
         """

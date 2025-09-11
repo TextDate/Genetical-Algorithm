@@ -116,10 +116,12 @@ def main() -> None:
     # Multi-objective evaluation parameters
     parser.add_argument('--disable_multi_objective', action='store_true', 
                         help="Disable multi-objective evaluation (use fitness only)")
-    parser.add_argument('--fitness_weight', type=float, default=0.7,
-                        help="Weight for compression ratio in multi-objective evaluation (default: 0.7)")
+    parser.add_argument('--fitness_weight', type=float, default=0.5,
+                        help="Weight for compression ratio in multi-objective evaluation (default: 0.5)")
     parser.add_argument('--time_weight', type=float, default=0.3,
                         help="Weight for compression time in multi-objective evaluation (default: 0.3)")
+    parser.add_argument('--ram_weight', type=float, default=0.2,
+                        help="Weight for RAM usage in multi-objective evaluation (default: 0.2)")
     parser.add_argument('--disable_time_penalty', action='store_true',
                         help="Disable time penalty system (use linear time weighting only)")
     parser.add_argument('--time_penalty_threshold', type=float, default=10.0,
@@ -200,6 +202,7 @@ def main() -> None:
         enable_multi_objective=not args.disable_multi_objective,
         fitness_weight=args.fitness_weight,
         time_weight=args.time_weight,
+        ram_weight=args.ram_weight,
         enable_time_penalty=not args.disable_time_penalty,
         time_penalty_threshold=args.time_penalty_threshold
     )

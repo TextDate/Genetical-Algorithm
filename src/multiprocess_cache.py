@@ -3,7 +3,6 @@ import json
 import os
 import time
 import fcntl
-import threading
 from typing import Dict, Any, Optional, Tuple
 from pathlib import Path
 from ga_constants import GAConstants
@@ -22,65 +21,35 @@ class MultiprocessCache:
         self.max_entries = max_entries
         self.max_age_seconds = max_age_hours * 3600
         self._ensure_cache_dir()
-        
-        # Use file-based statistics for multiprocess safety
-        self._stats_file = self.cache_dir / "stats.json"
-        self._stats_lock = threading.Lock()
     
     def _ensure_cache_dir(self):
         """Create cache directory if it doesn't exist."""
         self.cache_dir.mkdir(exist_ok=True)
     
-    def _update_stats(self, hits: int = 0, misses: int = 0):
-        """Update statistics in a multiprocess-safe way."""
+    def _record_hit(self):
+        """Record a cache hit by creating a simple marker file."""
         try:
-            with self._stats_lock:
-                stats = {'hits': 0, 'misses': 0}
-                
-                # Read existing stats
-                if self._stats_file.exists():
-                    try:
-                        with open(self._stats_file, 'r') as f:
-                            fcntl.flock(f.fileno(), fcntl.LOCK_SH)
-                            try:
-                                stats = json.load(f)
-                            finally:
-                                fcntl.flock(f.fileno(), fcntl.LOCK_UN)
-                    except (ValueError, OSError):
-                        stats = {'hits': 0, 'misses': 0}
-                
-                # Update stats
-                stats['hits'] = stats.get('hits', 0) + hits
-                stats['misses'] = stats.get('misses', 0) + misses
-                
-                # Write updated stats atomically
-                temp_stats = self._stats_file.with_suffix('.tmp')
-                with open(temp_stats, 'w') as f:
-                    fcntl.flock(f.fileno(), fcntl.LOCK_EX)
-                    try:
-                        json.dump(stats, f)
-                    finally:
-                        fcntl.flock(f.fileno(), fcntl.LOCK_UN)
-                
-                temp_stats.replace(self._stats_file)
-        except (OSError, ValueError):
-            # Silently fail if we can't update stats
-            pass
+            hit_file = self.cache_dir / f"hit_{time.time_ns()}.marker"
+            hit_file.write_text("1")
+        except Exception:
+            pass  # Ignore errors
+    
+    def _record_miss(self):
+        """Record a cache miss by creating a simple marker file."""
+        try:
+            miss_file = self.cache_dir / f"miss_{time.time_ns()}.marker"
+            miss_file.write_text("1")
+        except Exception:
+            pass  # Ignore errors
     
     def _read_stats(self):
-        """Read current statistics."""
+        """Read current statistics by counting marker files."""
         try:
-            if self._stats_file.exists():
-                with open(self._stats_file, 'r') as f:
-                    fcntl.flock(f.fileno(), fcntl.LOCK_SH)
-                    try:
-                        stats = json.load(f)
-                        return stats.get('hits', 0), stats.get('misses', 0)
-                    finally:
-                        fcntl.flock(f.fileno(), fcntl.LOCK_UN)
-        except (ValueError, OSError):
-            pass
-        return 0, 0
+            hits = len(list(self.cache_dir.glob("hit_*.marker")))
+            misses = len(list(self.cache_dir.glob("miss_*.marker")))
+            return hits, misses
+        except Exception:
+            return 0, 0
     
     def _generate_cache_key(self, compressor_type: str, params: Dict[str, Any], input_file_path: str) -> str:
         """Generate a consistent cache key."""
@@ -113,36 +82,49 @@ class MultiprocessCache:
         except OSError:
             return False
     
-    def get(self, compressor_type: str, params: Dict[str, Any], input_file_path: str) -> Optional[Tuple[float, float]]:
-        """Retrieve cached compression ratio and time if available."""
+    def get(self, compressor_type: str, params: Dict[str, Any], input_file_path: str) -> Optional[Tuple[float, float, float]]:
+        """Retrieve cached compression ratio, time, and RAM usage if available."""
         cache_key = self._generate_cache_key(compressor_type, params, input_file_path)
         cache_file = self._get_cache_file_path(cache_key)
         
-        try:
-            if cache_file.exists() and self._is_cache_entry_valid(cache_file):
-                with open(cache_file, 'r') as f:
-                    # Use file locking for safe concurrent access
-                    fcntl.flock(f.fileno(), fcntl.LOCK_SH)
-                    try:
-                        data = json.load(f)
-                        self._update_stats(hits=1)
-                        # Return tuple (fitness, time) for backward compatibility
-                        result = data.get('result')
-                        compression_time = data.get('compression_time', 0.0)  # Default to 0.0 for old cache entries
-                        return (result, compression_time)
-                    finally:
-                        fcntl.flock(f.fileno(), fcntl.LOCK_UN)
-            else:
-                if cache_file.exists():
-                    print(f"  File age check: valid={self._is_cache_entry_valid(cache_file)}")
-                self._update_stats(misses=1)
-                return None
-        except (OSError, ValueError):
-            self._update_stats(misses=1)
-            return None
+        # Try twice with a small delay to handle race conditions
+        for attempt in range(2):
+            try:
+                if cache_file.exists() and self._is_cache_entry_valid(cache_file):
+                    with open(cache_file, 'r') as f:
+                        # Use file locking for safe concurrent access
+                        fcntl.flock(f.fileno(), fcntl.LOCK_SH)
+                        try:
+                            data = json.load(f)
+                            self._record_hit()
+                            # Return tuple (fitness, time, ram) with backward compatibility
+                            result = data.get('result')
+                            compression_time = data.get('compression_time', 0.0)  # Default to 0.0 for old cache entries
+                            ram_usage = data.get('ram_usage', 0.0)  # Default to 0.0 for old cache entries
+                            return (result, compression_time, ram_usage)
+                        finally:
+                            fcntl.flock(f.fileno(), fcntl.LOCK_UN)
+                else:
+                    # If first attempt fails and file might be being written, wait and retry
+                    if attempt == 0:
+                        time.sleep(0.02)  # 20ms delay before retry
+                        continue
+                    # This is the final attempt - record miss
+                    break  # Exit loop to record miss at the end
+            except (OSError, ValueError) as e:
+                # If first attempt fails with an error, wait and retry
+                if attempt == 0:
+                    time.sleep(0.02)  # 20ms delay before retry
+                    continue
+                # This is the final attempt - record miss
+                break  # Exit loop to record miss at the end
+        
+        # Record miss only once at the end
+        self._record_miss()
+        return None
     
-    def set(self, compressor_type: str, params: Dict[str, Any], input_file_path: str, result: float, compression_time: float = 0.0) -> None:
-        """Cache a compression result with timing."""
+    def set(self, compressor_type: str, params: Dict[str, Any], input_file_path: str, result: float, compression_time: float = 0.0, ram_usage: float = 0.0) -> None:
+        """Cache a compression result with timing and RAM usage."""
         if result is None or result <= 0:
             return  # Don't cache invalid results
         
@@ -156,6 +138,7 @@ class MultiprocessCache:
             cache_data = {
                 'result': result,
                 'compression_time': compression_time,
+                'ram_usage': ram_usage,
                 'timestamp': time.time(),
                 'compressor': compressor_type,
                 'input_file': input_file_path
@@ -168,11 +151,16 @@ class MultiprocessCache:
                 fcntl.flock(f.fileno(), fcntl.LOCK_EX)
                 try:
                     json.dump(cache_data, f)
+                    f.flush()  # Ensure data is written to disk
+                    os.fsync(f.fileno())  # Force file system sync
                 finally:
                     fcntl.flock(f.fileno(), fcntl.LOCK_UN)
             
             # Atomic move
             temp_file.replace(cache_file)
+            
+            # Small delay to ensure file system consistency across processes
+            time.sleep(0.01)  # 10ms delay for file system sync
             
         except (OSError, ValueError):
             # Silently fail if we can't write to cache
@@ -203,8 +191,8 @@ class MultiprocessCache:
         hit_rate = hits / total_requests if total_requests > 0 else 0.0
         
         try:
-            # Don't count stats.json as a cache entry
-            cache_files = [f for f in self.cache_dir.glob("*.json") if f.name != "stats.json"]
+            # Count actual cache files (not marker files)
+            cache_files = [f for f in self.cache_dir.glob("*.json") if not f.name.endswith('.marker')]
             cache_size = len(cache_files)
         except OSError:
             cache_size = 0
@@ -214,18 +202,19 @@ class MultiprocessCache:
     def clear(self) -> None:
         """Clear the entire cache."""
         try:
+            # Clear cache files
             for cache_file in self.cache_dir.glob("*.json"):
                 try:
                     cache_file.unlink()
                 except OSError:
                     pass
             
-            # Reset statistics
-            try:
-                with open(self._stats_file, 'w') as f:
-                    json.dump({'hits': 0, 'misses': 0}, f)
-            except (OSError, ValueError):
-                pass
+            # Clear statistics marker files
+            for marker_file in self.cache_dir.glob("*.marker"):
+                try:
+                    marker_file.unlink()
+                except OSError:
+                    pass
         except OSError:
             pass
     

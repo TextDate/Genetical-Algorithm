@@ -71,28 +71,36 @@ def evaluate_fitness_worker(args: Tuple) -> float:
                 individual_name=individual_name
             )
         
-        # File-based multiprocess cache is automatically used
-        
+
         # Evaluate fitness and get timing
         result = compressor.evaluate(decoded_individual, individual_name)
         
-        # Handle tuple return (fitness, compression_time) or just fitness for backward compatibility
+        # Handle tuple return (fitness, compression_time, ram_usage) or just fitness for backward compatibility
         if isinstance(result, tuple):
-            fitness, compression_time = result
+            if len(result) == 3:
+                fitness, compression_time, ram_usage = result
+            elif len(result) == 2:
+                fitness, compression_time = result
+                ram_usage = 0.0  # Default for legacy compatibility
+            else:
+                fitness = result[0]
+                compression_time = 0.0
+                ram_usage = 0.0
         else:
             fitness = result
             compression_time = 0.0
+            ram_usage = 0.0
         
         # Validate fitness result with proper error handling
         validated_fitness = validate_fitness(fitness, individual_name, min_expected=0.0)
-        return validated_fitness, compression_time
+        return validated_fitness, compression_time, ram_usage
             
     except Exception as e:
         # Use standardized error handling
         fallback_fitness = handle_compression_error(
             e, compressor_config.get('type', 'unknown'), individual_name
         )
-        return fallback_fitness, 0.0  # Return tuple (fitness, time)
+        return fallback_fitness, 0.0, 0.0  # Return tuple (fitness, time, ram)
 
 
 class EvaluationEngine:
@@ -134,10 +142,14 @@ class EvaluationEngine:
         # Initialize multi-objective evaluator if configured
         self.multi_objective_evaluator = None
         if config and hasattr(config, 'enable_multi_objective') and config.enable_multi_objective:
+            # Combine RAM weight with additional objectives
+            additional_weights = config.additional_objectives.copy() if config.additional_objectives else {}
+            additional_weights['ram'] = config.ram_weight
+            
             weights = ObjectiveWeights(
                 fitness_weight=config.fitness_weight,
                 time_weight=config.time_weight,
-                additional_weights=config.additional_objectives or {}
+                additional_weights=additional_weights
             )
             self.multi_objective_evaluator = MultiObjectiveEvaluator(
                 weights=weights,
@@ -147,7 +159,8 @@ class EvaluationEngine:
             )
             self.logger.info("Multi-objective evaluation enabled",
                            fitness_weight=config.fitness_weight,
-                           time_weight=config.time_weight)
+                           time_weight=config.time_weight,
+                           ram_weight=config.ram_weight)
         
         # Create serializable compressor config for ProcessPoolExecutor using registry
         self.compressor_config = create_compressor_config(compressor)
@@ -187,19 +200,28 @@ class EvaluationEngine:
             compressor_type = type(self.compressor).__name__
             result = self.compressor.evaluate(decoded_individual, individual_name)
             
-            # Handle tuple return (fitness, compression_time) or just fitness for backward compatibility
+            # Handle tuple return (fitness, compression_time, ram_usage) or just fitness for backward compatibility
             if isinstance(result, tuple):
-                fitness, compression_time = result
+                if len(result) == 3:
+                    fitness, compression_time, ram_usage = result
+                elif len(result) == 2:
+                    fitness, compression_time = result
+                    ram_usage = 0.0  # Default for legacy compatibility
+                else:
+                    fitness = result[0]
+                    compression_time = 0.0
+                    ram_usage = 0.0
             else:
                 fitness = result
                 compression_time = 0.0
+                ram_usage = 0.0
             
             # Validate fitness with proper error handling
             validated_fitness = validate_fitness(fitness, individual_name, min_expected=0.0)
             
             self.stats['evaluations_performed'] += 1
-            return validated_fitness, compression_time
-            
+            return validated_fitness, compression_time, ram_usage
+
         except Exception as e:
             self.stats['evaluation_errors'] += 1
             compressor_type = type(self.compressor).__name__
@@ -299,18 +321,29 @@ class EvaluationEngine:
                          desc=f"Evaluating Population ({self.max_threads} workers)")
                 )
                 
-                # Separate fitness values and compression times
+                # Separate fitness values, compression times, and RAM usage
                 fitness_results = []
                 compression_times = []
+                ram_usage_values = []
                 for result in evaluation_results:
                     if isinstance(result, tuple):
-                        fitness, comp_time = result
+                        if len(result) == 3:
+                            fitness, comp_time, ram_usage = result
+                        elif len(result) == 2:
+                            fitness, comp_time = result
+                            ram_usage = 0.0  # Default for legacy results
+                        else:
+                            fitness = result[0]
+                            comp_time = 0.0
+                            ram_usage = 0.0
                         fitness_results.append(fitness)
                         compression_times.append(comp_time)
+                        ram_usage_values.append(ram_usage)
                     else:
                         # Backward compatibility for old results
                         fitness_results.append(result)
                         compression_times.append(0.0)
+                        ram_usage_values.append(0.0)
             
             # Log successful parallel processing
             evaluation_time = time.time() - start_time
@@ -339,16 +372,27 @@ class EvaluationEngine:
             # Fallback to sequential evaluation
             fitness_results = []
             compression_times = []
+            ram_usage_values = []
             for individual in tqdm(population, desc="Evaluating Population (Sequential)"):
                 try:
                     result = self.evaluate_fitness(individual)
                     if isinstance(result, tuple):
-                        fitness, comp_time = result
+                        if len(result) == 3:
+                            fitness, comp_time, ram_usage = result
+                        elif len(result) == 2:
+                            fitness, comp_time = result
+                            ram_usage = 0.0
+                        else:
+                            fitness = result[0]
+                            comp_time = 0.0
+                            ram_usage = 0.0
                         fitness_results.append(fitness)
                         compression_times.append(comp_time)
+                        ram_usage_values.append(ram_usage)
                     else:
                         fitness_results.append(result)
                         compression_times.append(0.0)
+                        ram_usage_values.append(0.0)
                 except Exception as eval_error:
                     # Log and use fallback for individual failures
                     self.logger.log_evaluation_error(
@@ -356,6 +400,7 @@ class EvaluationEngine:
                     )
                     fitness_results.append(self.min_fitness)
                     compression_times.append(0.0)
+                    ram_usage_values.append(0.0)
         finally:
             # Stop memory monitoring
             memory_monitor_active.clear()
@@ -364,14 +409,18 @@ class EvaluationEngine:
         
         # Apply multi-objective evaluation if enabled
         if self.multi_objective_evaluator:
+            # Prepare additional objectives (RAM usage as 'ram' objective)
+            additional_objectives = [{'ram': ram_usage} for ram_usage in ram_usage_values]
+            
             evaluation_metrics = self.multi_objective_evaluator.evaluate_population(
-                fitness_results, compression_times
+                fitness_results, compression_times, additional_objectives
             )
             # Replace fitness_results with combined multi-objective scores
             fitness_results = self.multi_objective_evaluator.get_combined_scores(evaluation_metrics)
             
             self.logger.debug("Multi-objective evaluation applied",
                            avg_combined_score=sum(fitness_results) / len(fitness_results) if fitness_results else 0.0,
+                           avg_ram_usage=sum(ram_usage_values) / len(ram_usage_values) if ram_usage_values else 0.0,
                            generation=generation)
         
         # Update statistics
@@ -380,7 +429,7 @@ class EvaluationEngine:
         self.stats['total_evaluation_time'] += evaluation_time
         self.stats['peak_memory_usage'] = max(self.stats['peak_memory_usage'], peak_memory)
         
-        return fitness_results, compression_times, peak_memory
+        return fitness_results, compression_times, ram_usage_values, peak_memory
     
     def evaluate_batch_sequential(self, population: List[Tuple[Tuple[str, ...], str]]) -> List[float]:
         """

@@ -102,7 +102,7 @@ class GAReporter:
     
     def save_generation_data(self, generation: int, population_with_fitness: List[Tuple[Any, float]], 
                            population_manager: Any, additional_data: Dict[str, Any] = None, 
-                           compression_times: List[float] = None):
+                           compression_times: List[float] = None, ram_usage_values: List[float] = None):
         """
         Save generation data to CSV and update tracking.
         
@@ -149,7 +149,7 @@ class GAReporter:
                     param_names = list(decoded[0].keys()) if decoded[0] else []
                     
                     # Header
-                    header = ['Individual_Name', 'Fitness', 'Compression_Time'] + param_names
+                    header = ['Individual_Name', 'Fitness', 'Compression_Time', 'RAM_Usage_MB'] + param_names
                     writer.writerow(header)
                     
                     # Data rows
@@ -160,10 +160,11 @@ class GAReporter:
                         # Use first model's parameters (assuming single model)
                         params = decoded_individual[0] if decoded_individual else {}
                         
-                        # Get compression time for this individual
+                        # Get compression time and RAM usage for this individual
                         compression_time = compression_times[i] if compression_times and i < len(compression_times) else 0.0
+                        ram_usage = ram_usage_values[i] if ram_usage_values and i < len(ram_usage_values) else 0.0
                         
-                        row = [individual_name, fitness, compression_time] + [params.get(param, 'N/A') for param in param_names]
+                        row = [individual_name, fitness, compression_time, ram_usage] + [params.get(param, 'N/A') for param in param_names]
                         writer.writerow(row)
         
         # Log generation summary

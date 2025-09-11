@@ -38,8 +38,8 @@ def test_basic_cache():
             return False
         print("PASS: Cache miss working correctly")
         
-        # Test cache set
-        cache.set(compressor_type, test_params, test_file, 2.5, 1.23)
+        # Test cache set with RAM usage
+        cache.set(compressor_type, test_params, test_file, 2.5, 1.23, 50.0)
         
         # Test cache hit
         result = cache.get(compressor_type, test_params, test_file)
@@ -47,13 +47,13 @@ def test_basic_cache():
             print("FAIL: Cache should return stored value")
             return False
         
-        if isinstance(result, tuple) and len(result) == 2:
-            fitness, compression_time = result
-            if abs(fitness - 2.5) > 0.001 or abs(compression_time - 1.23) > 0.001:
-                print(f"FAIL: Cached values incorrect: {result} vs (2.5, 1.23)")
+        if isinstance(result, tuple) and len(result) == 3:
+            fitness, compression_time, ram_usage = result
+            if abs(fitness - 2.5) > 0.001 or abs(compression_time - 1.23) > 0.001 or abs(ram_usage - 50.0) > 0.001:
+                print(f"FAIL: Cached values incorrect: {result} vs (2.5, 1.23, 50.0)")
                 return False
         else:
-            print(f"FAIL: Invalid cached result format: {result}")
+            print(f"FAIL: Invalid cached result format: {result}, expected 3-tuple")
             return False
         
         print("PASS: Cache hit working correctly")
