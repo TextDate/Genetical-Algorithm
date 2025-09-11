@@ -160,7 +160,12 @@ class GeneticAlgorithm:
         # Display best individual
         best_individual = self.population[0][0]
         decoded_best = self._decode_individual_cached(best_individual)
-        best_compression_time = individual_timing_data[0] if individual_timing_data else 0.0
+        # Get compression time from cache-aware evaluation
+        result = self.evaluation_engine.evaluate_fitness(best_individual)
+        if isinstance(result, tuple):
+            _, best_compression_time = result
+        else:
+            best_compression_time = 0.0
         
         generation_time = time.time() - init_time
         self.logger.log_generation_complete(1, best_fitness, generation_time, peak_memory)
@@ -293,15 +298,11 @@ class GeneticAlgorithm:
             self.logger.debug(f"Population sizes - Previous: {prev_pop_size}, Offspring: {offspring_size}, "
                             f"Target: {self.config.population_size}, Final: {final_pop_size}")
             
-            # Re-evaluate final population to get correct timing data
-            # (This is needed because elitist selection combines old population with offspring)
-            final_individuals = [ind for ind, _ in self.population]
-            _, final_compression_times, _ = self.evaluation_engine.evaluate_population_parallel(
-                final_individuals, generation=generation)
-                
-            # Save generation data with correct timing
+            # Save generation data without re-evaluating (use timing data from offspring evaluation)
+            # For reporting, we use the compression times from the offspring evaluation
+            # Elite individuals will have their cached times used automatically when needed
             self.reporter.save_generation_data(generation + 1, self.population, self.population_manager,
-                                             compression_times=final_compression_times)
+                                             compression_times=compression_times)
             
             # Track convergence
             best_fitness = self.population[0][1]
@@ -322,11 +323,21 @@ class GeneticAlgorithm:
             # Display progress
             best_individual = self.population[0][0]
             decoded_best = self._decode_individual_cached(best_individual)
-            best_compression_time = final_compression_times[0] if final_compression_times else 0.0
+            # Get compression time from cache-aware evaluation
+            result = self.evaluation_engine.evaluate_fitness(best_individual)
+            if isinstance(result, tuple):
+                _, best_compression_time = result
+            else:
+                best_compression_time = 0.0
             generation_time = time.time() - init_time
             
             self.logger.log_generation_complete(generation + 1, best_fitness, generation_time, peak_memory)
             self.logger.info(f"Best individual: {decoded_best} (compression time: {best_compression_time:.3f}s)")
+            
+            # Print cache statistics after each generation
+            cache = get_global_cache()
+            hits, misses, hit_rate, size = cache.get_stats()
+            print(f"Gen {generation + 1} Cache Stats: {hits} hits, {misses} misses, {hit_rate:.1%} hit rate, {size} entries")
             
             # Log optimization status
             if generation % 5 == 0:  # Every 5 generations

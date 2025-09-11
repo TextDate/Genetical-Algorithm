@@ -15,6 +15,9 @@ class MultiprocessCache:
     def __init__(self, cache_dir: str = ".cache", 
                  max_entries: int = GAConstants.DEFAULT_CACHE_MAX_ENTRIES, 
                  max_age_hours: int = GAConstants.DEFAULT_CACHE_MAX_AGE_HOURS):
+        # Force absolute path to ensure all processes use the same cache directory
+        if not os.path.isabs(cache_dir):
+            cache_dir = os.path.abspath(cache_dir)
         self.cache_dir = Path(cache_dir)
         self.max_entries = max_entries
         self.max_age_seconds = max_age_hours * 3600

@@ -71,8 +71,7 @@ def evaluate_fitness_worker(args: Tuple) -> float:
                 individual_name=individual_name
             )
         
-        # Force use of file-based cache for multiprocessing compatibility
-        compressor.use_optimized_cache = False
+        # File-based multiprocess cache is automatically used
         
         # Evaluate fitness and get timing
         result = compressor.evaluate(decoded_individual, individual_name)

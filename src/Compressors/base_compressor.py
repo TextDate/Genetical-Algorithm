@@ -8,18 +8,12 @@ from contextlib import contextmanager
 from cache import get_global_cache
 from ga_constants import CompressionTimeouts, DEFAULT_TIMEOUT
 from ga_logging import get_logger
-try:
-    from ga_components.optimized_cache_manager import get_optimized_cache_manager
-    OPTIMIZED_CACHE_AVAILABLE = True
-except ImportError:
-    OPTIMIZED_CACHE_AVAILABLE = False
+# Always use multiprocess-safe file-based cache for worker processes
 
 
 class BaseCompressor:
-    def __init__(self, input_file_path, reference_file_path=None, temp="temp", 
-                 use_optimized_cache: bool = True):
+    def __init__(self, input_file_path, reference_file_path=None, temp="temp"):
         self.logger = get_logger("Compressor")
-        self.use_optimized_cache = use_optimized_cache and OPTIMIZED_CACHE_AVAILABLE
         # Validate input file path
         if not input_file_path:
             raise ValueError("input_file_path cannot be empty")
@@ -146,18 +140,11 @@ class BaseCompressor:
         Returns:
             Compression ratio or None if evaluation failed or timed out
         """
-        # Check cache first (use optimized cache if available)
-        if self.use_optimized_cache:
-            optimized_cache = get_optimized_cache_manager()
-            cached_result = optimized_cache.get(compressor_type, params, self.input_file_path)
-            if cached_result is not None:
-                return cached_result
-        else:
-            # Fallback to original cache
-            cache = get_global_cache()
-            cached_result = cache.get(compressor_type, params, self.input_file_path)
-            if cached_result is not None:
-                return cached_result
+        # Check multiprocess-safe cache first
+        cache = get_global_cache()
+        cached_result = cache.get(compressor_type, params, self.input_file_path)
+        if cached_result is not None:
+            return cached_result
         
         # Cache miss - perform actual compression with timeout and timing
         import time
@@ -181,13 +168,8 @@ class BaseCompressor:
         
         # Cache the result if valid
         if result is not None and result > 0:
-            if self.use_optimized_cache:
-                optimized_cache = get_optimized_cache_manager()
-                optimized_cache.put(compressor_type, params, self.input_file_path, result)
-            else:
-                # Fallback to original cache
-                cache = get_global_cache()
-                cache.set(compressor_type, params, self.input_file_path, result)
+            cache = get_global_cache()
+            cache.set(compressor_type, params, self.input_file_path, result)
         
         return result
     
@@ -205,21 +187,14 @@ class BaseCompressor:
         Returns:
             Tuple of (compression_ratio, compression_time) or (None, 0) if evaluation failed
         """
-        # Check cache first (use optimized cache if available)
-        if self.use_optimized_cache:
-            optimized_cache = get_optimized_cache_manager()
-            cached_result = optimized_cache.get(compressor_type, params, self.input_file_path)
-            if cached_result is not None:
-                return cached_result  # Returns (fitness, original_compression_time)
+        # Check multiprocess-safe cache first
+        cache = get_global_cache()
+        cached_result = cache.get(compressor_type, params, self.input_file_path)
+        if cached_result is not None:
+            self.logger.debug(f"Cache HIT for {name}: {cached_result}")
+            return cached_result  # Returns (fitness, original_compression_time)
         else:
-            # Fallback to original cache
-            cache = get_global_cache()
-            cached_result = cache.get(compressor_type, params, self.input_file_path)
-            if cached_result is not None:
-                self.logger.debug(f"Cache HIT for {name}: {cached_result}")
-                return cached_result  # Returns (fitness, original_compression_time)
-            else:
-                self.logger.debug(f"Cache MISS for {name}, parameters: {params}")
+            self.logger.debug(f"Cache MISS for {name}, parameters: {params}")
         
         # Cache miss - perform actual compression with timeout and timing
         import time
@@ -243,13 +218,7 @@ class BaseCompressor:
         
         # Cache the result if valid
         if result is not None and result > 0:
-            if self.use_optimized_cache:
-                optimized_cache = get_optimized_cache_manager()
-                optimized_cache.put(compressor_type, params, self.input_file_path, result, 
-                                   compressed_size=0, compression_time=compression_time)
-            else:
-                # Fallback to original cache
-                cache = get_global_cache()
-                cache.set(compressor_type, params, self.input_file_path, result, compression_time)
+            cache = get_global_cache()
+            cache.set(compressor_type, params, self.input_file_path, result, compression_time)
         
         return result, compression_time

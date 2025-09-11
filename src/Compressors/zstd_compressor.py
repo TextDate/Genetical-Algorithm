@@ -39,7 +39,6 @@ class ZstdCompressor(BaseCompressor):
         
         # Get appropriate timeout based on compression level and file size
         timeout_seconds = get_compression_timeout('zstd', params_list[0], file_size_mb)
-        
         return self.evaluate_with_cache_and_timing(
             compressor_type='zstd',
             params=params_list[0],  # Extract first parameter set
