@@ -142,13 +142,13 @@ class EvaluationEngine:
         # Initialize multi-objective evaluator if configured
         self.multi_objective_evaluator = None
         if config and hasattr(config, 'enable_multi_objective') and config.enable_multi_objective:
-            # Combine RAM weight with additional objectives
+            # Use direct RAM weight for 3-tuple system
             additional_weights = config.additional_objectives.copy() if config.additional_objectives else {}
-            additional_weights['ram'] = config.ram_weight
             
             weights = ObjectiveWeights(
                 fitness_weight=config.fitness_weight,
                 time_weight=config.time_weight,
+                ram_weight=config.ram_weight,
                 additional_weights=additional_weights
             )
             self.multi_objective_evaluator = MultiObjectiveEvaluator(
@@ -229,7 +229,7 @@ class EvaluationEngine:
             # Use standardized error handling with logging
             self.logger.log_evaluation_error(individual[1], compressor_type, e, using_fallback=True)
             fallback_fitness = handle_compression_error(e, compressor_type, individual[1])
-            return fallback_fitness, 0.0  # Return tuple (fitness, time)
+            return fallback_fitness, 0.0, 0.0  # Return tuple (fitness, time, ram)
     
     def evaluate_population_parallel(self, population: List[Tuple[Tuple[str, ...], str]], 
                                    generation: int = 0) -> Tuple[List[float], List[float], float]:
@@ -409,11 +409,8 @@ class EvaluationEngine:
         
         # Apply multi-objective evaluation if enabled
         if self.multi_objective_evaluator:
-            # Prepare additional objectives (RAM usage as 'ram' objective)
-            additional_objectives = [{'ram': ram_usage} for ram_usage in ram_usage_values]
-            
             evaluation_metrics = self.multi_objective_evaluator.evaluate_population(
-                fitness_results, compression_times, additional_objectives
+                fitness_results, compression_times, ram_usage_values
             )
             # Replace fitness_results with combined multi-objective scores
             fitness_results = self.multi_objective_evaluator.get_combined_scores(evaluation_metrics)
