@@ -54,6 +54,15 @@ class GAConfig:
     time_penalty_threshold: float = 10.0 # Time threshold in seconds for penalty
     additional_objectives: Dict[str, float] = None  # For future extensibility
     
+    # Multi-Domain Analysis Configuration
+    enable_file_analysis: bool = True    # Enable automatic file characteristic analysis
+    enable_compressor_recommendation: bool = True  # Enable intelligent compressor selection
+    optimization_target: str = "balanced"  # "ratio", "speed", "memory", "balanced"
+    batch_processing_enabled: bool = False  # Enable batch processing mode
+    max_concurrent_jobs: int = 4         # Maximum concurrent jobs in batch mode
+    resource_monitoring_enabled: bool = True  # Enable resource usage monitoring
+    cross_domain_analysis: bool = False  # Enable cross-domain performance analysis
+    
     def __post_init__(self):
         """Validate user parameters after initialization."""
         self._validate()
@@ -111,6 +120,14 @@ class GAConfig:
                 errors.append(f"Suggested weights: --fitness_weight 0.5 --time_weight 0.3 --ram_weight 0.2")
             if self.enable_time_penalty and self.time_penalty_threshold <= 0:
                 errors.append(f"Time penalty threshold ({self.time_penalty_threshold}) must be positive when penalties are enabled")
+        
+        # Multi-domain analysis validation
+        valid_optimization_targets = ["ratio", "speed", "memory", "balanced"]
+        if self.optimization_target not in valid_optimization_targets:
+            errors.append(f"Optimization target ({self.optimization_target}) must be one of: {valid_optimization_targets}")
+        
+        if self.batch_processing_enabled and self.max_concurrent_jobs < 1:
+            errors.append(f"Max concurrent jobs ({self.max_concurrent_jobs}) must be positive when batch processing is enabled")
             
         if errors:
             raise ValueError("Configuration validation failed:\n" + "\n".join(f"  • {error}" for error in errors))
@@ -126,14 +143,25 @@ class GAConfig:
         Returns:
             Validated GAConfig instance
         """
-        return cls(
-            population_size=args.population_size,
-            generations=args.generations,
-            mutation_rate=args.mutation_rate,
-            crossover_rate=args.crossover_rate,
-            max_threads=args.max_threads,
-            output_dir=args.output_dir
-        )
+        config_params = {
+            'population_size': args.population_size,
+            'generations': args.generations,
+            'mutation_rate': args.mutation_rate,
+            'crossover_rate': args.crossover_rate,
+            'max_threads': args.max_threads,
+            'output_dir': args.output_dir,
+            'enable_multi_objective': not getattr(args, 'disable_multi_objective', False),
+            'fitness_weight': getattr(args, 'fitness_weight', 0.5),
+            'time_weight': getattr(args, 'time_weight', 0.3),
+            'ram_weight': getattr(args, 'ram_weight', 0.2),
+            'enable_time_penalty': not getattr(args, 'disable_time_penalty', False),
+            'time_penalty_threshold': getattr(args, 'time_penalty_threshold', 10.0),
+            'enable_file_analysis': getattr(args, 'analyze_file', False),
+            'enable_compressor_recommendation': getattr(args, 'recommend_compressor', False),
+            'optimization_target': getattr(args, 'optimization_target', 'balanced')
+        }
+        
+        return cls(**config_params)
     
     @property
     def num_offspring(self) -> int:
@@ -168,6 +196,20 @@ class GAConfig:
         else:
             summary += "\n  Evaluation: Single-objective (fitness only)"
         
+        # Multi-domain analysis info
+        if self.enable_file_analysis or self.enable_compressor_recommendation:
+            summary += f"""
+  Multi-Domain Analysis:
+    File analysis: {'enabled' if self.enable_file_analysis else 'disabled'}
+    Compressor recommendation: {'enabled' if self.enable_compressor_recommendation else 'disabled'}
+    Optimization target: {self.optimization_target}"""
+        
+        if self.batch_processing_enabled:
+            summary += f"""
+  Batch Processing:
+    Max concurrent jobs: {self.max_concurrent_jobs}
+    Resource monitoring: {'enabled' if self.resource_monitoring_enabled else 'disabled'}"""
+        
         return summary
     
     def __str__(self) -> str:
@@ -193,7 +235,21 @@ class GAConfig:
             'enable_convergence_acceleration': self.enable_convergence_acceleration,
             'enable_performance_monitoring': self.enable_performance_monitoring,
             'enable_dynamic_thread_scaling': self.enable_dynamic_thread_scaling,
-            'diversity_strategy': self.diversity_strategy
+            'diversity_strategy': self.diversity_strategy,
+            'enable_multi_objective': self.enable_multi_objective,
+            'fitness_weight': self.fitness_weight,
+            'time_weight': self.time_weight,
+            'ram_weight': self.ram_weight,
+            'normalize_time': self.normalize_time,
+            'enable_time_penalty': self.enable_time_penalty,
+            'time_penalty_threshold': self.time_penalty_threshold,
+            'enable_file_analysis': self.enable_file_analysis,
+            'enable_compressor_recommendation': self.enable_compressor_recommendation,
+            'optimization_target': self.optimization_target,
+            'batch_processing_enabled': self.batch_processing_enabled,
+            'max_concurrent_jobs': self.max_concurrent_jobs,
+            'resource_monitoring_enabled': self.resource_monitoring_enabled,
+            'cross_domain_analysis': self.cross_domain_analysis
         }
     
     @classmethod

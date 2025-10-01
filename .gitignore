@@ -194,3 +194,5 @@ analysis_results_chemistry/
 Chem_GA/
 logs/
 chemistry_*
+archive
+batch_results/

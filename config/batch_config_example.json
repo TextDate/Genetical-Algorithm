@@ -1,0 +1,61 @@
+{
+  "datasets": [
+    {
+      "dataset_path": "datasets/text_data",
+      "compressors": ["zstd", "lzma", "brotli"],
+      "file_patterns": ["*.txt", "*.log", "*.md"],
+      "ga_config": {
+        "population_size": 20,
+        "generations": 15,
+        "max_threads": 2,
+        "mutation_rate": 0.01,
+        "crossover_rate": 0.8
+      }
+    },
+    {
+      "dataset_path": "datasets/scientific_data",
+      "compressors": ["lzma", "zstd"],
+      "file_patterns": ["*.sdf", "*.csv", "*.fasta"],
+      "ga_config": {
+        "population_size": 25,
+        "generations": 20,
+        "max_threads": 2
+      }
+    },
+    {
+      "dataset_path": "datasets/source_code",
+      "compressors": ["lzma", "brotli", "zstd"],
+      "file_patterns": ["*.py", "*.js", "*.json", "*.xml"],
+      "ga_config": {
+        "population_size": 15,
+        "generations": 12,
+        "max_threads": 1
+      }
+    },
+    {
+      "dataset_path": "datasets/binary_data",
+      "compressors": ["zstd", "lzma"],
+      "file_patterns": ["*.bin", "*.dat"],
+      "ga_config": {
+        "population_size": 30,
+        "generations": 25,
+        "max_threads": 3
+      }
+    }
+  ],
+  "max_concurrent_jobs": 4,
+  "max_memory_per_job_mb": 2048,
+  "max_total_memory_mb": 8192,
+  "cpu_cores_per_job": 2,
+  "enable_smart_scheduling": true,
+  "enable_resource_monitoring": true,
+  "retry_failed_jobs": true,
+  "max_retries": 2,
+  "save_individual_results": true,
+  "save_progress_reports": true,
+  "compress_output": false,
+  "auto_recommend_compressors": true,
+  "use_file_characteristics_filtering": true,
+  "skip_large_files_mb": 1000,
+  "skip_small_files_kb": 1
+}

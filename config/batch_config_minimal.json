@@ -1,0 +1,12 @@
+{
+  "datasets": [
+    {
+      "dataset_path": "data/test_data",
+      "compressors": ["zstd", "lzma"],
+      "file_patterns": ["*.txt"]
+    }
+  ],
+  "max_concurrent_jobs": 2,
+  "enable_smart_scheduling": true,
+  "auto_recommend_compressors": false
+}

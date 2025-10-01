@@ -7,6 +7,9 @@
 
 This repository implements an **enterprise-grade genetic algorithm system** designed to optimize compression parameters for multiple data compression algorithms. The system uses evolutionary computation to automatically discover optimal parameter configurations that maximize compression efficiency for any given dataset.
 
+**🎯 NEW: Multi-Domain Application (T2) - COMPLETED**
+The system now includes a comprehensive **multi-domain analysis framework** with intelligent file analysis, automatic compressor recommendations, cross-domain benchmarking, and advanced visualization capabilities.
+
 ### Supported Compression Algorithms
 
 - **Zstandard (ZSTD)** - Fast compression with excellent ratios
@@ -27,6 +30,15 @@ This repository implements an **enterprise-grade genetic algorithm system** desi
 - **Elite Selection** with tournament-based breeding
 - **Duplicate Prevention** to maintain population diversity
 
+### Multi-Domain Analysis System (T2) 
+
+- **Intelligent File Analysis** - Automatic data type detection and entropy analysis
+- **Smart Compressor Recommendations** - ML-based selection with confidence scoring
+- **Cross-Domain Benchmarking** - Concurrent GA optimization across multiple domains
+- **Advanced Performance Metrics** - Domain consistency, adaptability, and versatility scoring
+- **Batch Processing** - Resource-aware job scheduling with smart retry mechanisms
+- **Comprehensive Visualization** - Multi-dimensional analysis with executive reporting
+
 ### Architecture
 
 - **Modular Component Design** with clean separation of concerns
@@ -40,7 +52,8 @@ This repository implements an **enterprise-grade genetic algorithm system** desi
 
 - **Dynamic Resource Allocation** based on system load and compressor complexity
 - **Comprehensive Test Suite** with integration and performance testing
-- ** Logging Infrastructure** replacing all print statements
+- **Advanced Logging Infrastructure** replacing all print statements
+- **HPC Cluster Integration** with SLURM compatibility
 
 ---
 
@@ -68,8 +81,8 @@ venv\Scripts\activate
 # On Linux or macOS:
 source venv/bin/activate
 
-# Install dependencies  
-pip install -r requirements.txt
+# Install dependencies
+pip install -r config/requirements.txt
 
 # Verify installation
 python -c "import genetic_algorithm; print('Installation successful!')"
@@ -77,22 +90,55 @@ python -c "import genetic_algorithm; print('Installation successful!')"
 
 ## Usage
 
-### Basic Execution
+### Single-File Genetic Algorithm
 
 ```bash
 # Basic genetic algorithm execution
-python main.py --compressor zstd --param_file config/params.json --input your_data.txt
+python src/main.py --compressor zstd --param_file config/params.json --input your_data.txt
 
 # Example with specific parameters
-python main.py --compressor lzma --param_file config/params.json --input dataset.sdf \
+python src/main.py --compressor lzma --param_file config/params.json --input dataset.sdf \
                --generations 50 --population_size 30 --max_threads 4
 ```
 
-### Command Line Interface
+### Multi-Domain Operations (T2) 🆕
 
 ```bash
-python main.py --compressor <algorithm> --param_file config/params.json --input <file> [options]
+# Analyze file characteristics and get intelligent recommendations
+python multi_domain_cli.py analyze-file --input data.txt --output analysis.json
+python multi_domain_cli.py recommend --input data.txt --target speed
+
+# Run comprehensive multi-domain benchmark
+python multi_domain_cli.py benchmark --dataset-dir datasets/ \
+                                    --compressors zstd lzma brotli \
+                                    --output-dir benchmark_results/
+
+# Create synthetic multi-domain test datasets
+python multi_domain_cli.py create-datasets --output-dir test_datasets/
+
+# Batch processing across multiple datasets
+python multi_domain_cli.py batch --config batch_config.json --output-dir batch_results/
+
+# Generate comprehensive visualizations
+python tools/multi_domain_visualizer.py --results-file benchmark_results.json \
+                                        --output-dir visualizations/
 ```
+
+### Command Line Interfaces
+
+#### Single-File GA
+
+```bash
+python src/main.py --compressor <algorithm> --param_file config/params.json --input <file> [options]
+```
+
+#### Multi-Domain CLI
+
+```bash
+python multi_domain_cli.py <command> [command-specific options]
+```
+
+Available commands: `analyze-file`, `recommend`, `benchmark`, `batch`, `create-datasets`, `cross-domain-analysis`
 
 #### Required Arguments
 
@@ -142,7 +188,7 @@ python main.py --compressor <algorithm> --param_file config/params.json --input 
 
 ```bash
 # Quick optimization with lower resource requirements
-python main.py --compressor zstd --input test_data/test_10mb.sdf \
+python src/main.py --compressor zstd --input test_data/test_10mb.sdf \
                --generations 20 --population_size 20 --max_threads 4
 ```
 
@@ -152,11 +198,8 @@ python main.py --compressor zstd --input test_data/test_10mb.sdf \
 
 ```
 Genetical-Algorithm/
-├── Core System Entry Point
-│   └── main.py                    # CLI entry point
-│
 ├── Source Code (src/)
-│   ├── main.py                    # Main CLI implementation
+│   ├── main.py                    # Main CLI entry point
 │   ├── genetic_algorithm.py       # Main GA orchestrator  
 │   ├── ga_config.py              # Configuration management
 │   ├── ga_constants.py           # Centralized constants
@@ -167,16 +210,22 @@ Genetical-Algorithm/
 │   │
 │   ├── ga_components/            # Genetic Algorithm Components
 │   │   ├── algorithm_optimization.py    # Adaptive parameter tuning
+│   │   ├── batch_processor.py           # Multi-domain batch processing
+│   │   ├── compressor_recommender.py    # ML-based compressor selection
+│   │   ├── compressor_registry.py       # Factory pattern for compressors
 │   │   ├── convergence_detection.py     # Early stopping logic
+│   │   ├── cross_domain_evaluator.py    # Cross-domain performance metrics
 │   │   ├── duplicate_prevention.py      # Population diversity
+│   │   ├── dynamic_thread_manager.py    # Intelligent resource scaling
 │   │   ├── evaluation.py               # Fitness evaluation engine
-│   │   ├── population_management.py     # Individual encoding/decoding
-│   │   ├── selection.py                # Selection strategies
-│   │   ├── crossover.py                # Crossover operations
-│   │   ├── mutation.py                 # Mutation strategies
-│   │   ├── compressor_registry.py      # Factory pattern for compressors
-│   │   ├── dynamic_thread_manager.py   # Intelligent resource scaling
-│   │   └── optimized_cache_manager.py  # Multi-compressor caching
+│   │   ├── file_analyzer.py            # Intelligent file analysis
+│   │   ├── genetic_operations.py       # Crossover and mutation operations
+│   │   ├── multi_domain_benchmarker.py  # Multi-domain benchmarking
+│   │   ├── multi_objective_evaluator.py # Multi-objective optimization
+│   │   ├── parameter_encoding.py       # Parameter encoding/decoding
+│   │   ├── population_management.py     # Population initialization/management
+│   │   ├── reporting.py                # Results reporting
+│   │   └── selection.py                # Selection strategies
 │   │
 │   └── Compressors/              # Compression Modules
 │       ├── base_compressor.py      # Abstract base class
@@ -186,9 +235,10 @@ Genetical-Algorithm/
 │       ├── paq8_compressor.py      # PAQ8 implementation
 │       └── ac2_compressor.py       # AC2 implementation
 │
-├── Configuration
+├── Configuration (config/)
 │   ├── params.json               # Parameter definitions
-│   └── requirements.txt          # Dependency specifications
+│   ├── requirements.txt          # Dependency specifications
+│   └── batch_config_*.json       # Multi-domain batch configurations
 │
 ├── Data Files
 │   ├── data/
@@ -210,17 +260,25 @@ Genetical-Algorithm/
 │   │   └── test_fixtures.py        # Test data and mocks
 │   └── run_all_tests.py           # Test runner
 │
+├── Multi-Domain CLI
+│   └── multi_domain_cli.py        # Multi-domain operations CLI
+│
 ├── Analysis & Results
 │   ├── tools/                     # Analysis utilities
-│   ├── docs/                      # Technical documentation  
-│   ├── Extractors/               # Result extraction utilities
-│   ├── Plots/                    # Plot generation scripts
-│   └── ga_results_*/             # Generated results (per compressor)
+│   │   ├── dataset_collector.py   # Multi-domain dataset generation
+│   │   ├── ga_performance_analyzer.py # Traditional GA analysis
+│   │   └── multi_domain_visualizer.py # Multi-domain visualization
+│   ├── docs/                      # Technical documentation
+│   ├── batch_results/             # Multi-domain batch results
+│   ├── ga_results/               # Single GA run results
+│   └── logs/                     # System and execution logs
+│
+├── Archive & Legacy
+│   └── archive/                   # Historical experiments and results
 │
 └── External Dependencies
     ├── paq8px/                   # PAQ8 binaries and source
-    ├── ac2/                      # AC2 compressor source
-    └── GA/                       # SLURM job scripts
+    └── ac2/                      # AC2 compressor source
 ```
 
 ---
@@ -298,7 +356,7 @@ source /data/home/username/virtual-venv/bin/activate
 cd /data/home/username/TextDate/Genetical-Algorithm
 
 # Execute genetic algorithm
-python main.py \
+python src/main.py \
     --compressor lzma \
     --param_file config/params.json \
     --input test_data/test_10mb.sdf \

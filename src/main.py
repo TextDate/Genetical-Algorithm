@@ -22,6 +22,7 @@ import json
 import gzip
 import shutil
 from typing import Dict, Any, Optional
+from pathlib import Path
 
 # Core GA system
 from genetic_algorithm import GeneticAlgorithm
@@ -34,6 +35,10 @@ from Compressors.ac2_compressor import AC2Compressor
 from Compressors.lzma_compressor import LzmaCompressor
 from Compressors.brotli_compressor import BrotliCompressor
 from Compressors.paq8_compressor import PAQ8Compressor
+
+# Multi-domain analysis components
+from ga_components.file_analyzer import FileAnalyzer
+from ga_components.compressor_recommender import CompressorRecommender, RecommendationContext
 
 # Utilities
 from cache import get_global_cache
@@ -84,11 +89,19 @@ def main() -> None:
     Results are saved to the specified output directory.
     """
     # Parse command-line arguments
-    parser = argparse.ArgumentParser(description='Run a genetic algorithm for Zstd or AC2 compression.')
+    parser = argparse.ArgumentParser(description='Run a genetic algorithm for compression optimization.')
 
-    # Compressor Choice
-    parser.add_argument('--compressor',  '-c',type=str, choices=['zstd', 'ac2', 'lzma', 'brotli', 'paq8'], required=True,
-                        help="Choose the compressor: 'zstd', 'ac2', 'lzma', 'brotli', or 'paq8'")
+    # Compressor Choice (with auto-recommendation option)
+    parser.add_argument('--compressor',  '-c',type=str, choices=['zstd', 'ac2', 'lzma', 'brotli', 'paq8', 'auto'], 
+                        help="Choose the compressor: 'zstd', 'ac2', 'lzma', 'brotli', 'paq8', or 'auto' for intelligent selection")
+    
+    # Intelligent compressor selection options
+    parser.add_argument('--analyze-file', action='store_true',
+                        help="Analyze file characteristics before compression")
+    parser.add_argument('--recommend-compressor', action='store_true',
+                        help="Get intelligent compressor recommendations")
+    parser.add_argument('--optimization-target', choices=['ratio', 'speed', 'memory', 'balanced'], default='balanced',
+                        help="Optimization target for compressor recommendation (default: balanced)")
 
     # Parameters file path
     parser.add_argument('--param_file', '-p', type=str, required=True, help="JSON file containing compressor parameter ranges")
@@ -170,6 +183,54 @@ def main() -> None:
     # Load parameters from the file
     parameters = load_parameters(args.param_file)
 
+    # Handle file analysis and intelligent compressor selection
+    if args.analyze_file or args.recommend_compressor or args.compressor == 'auto':
+        analyzer = FileAnalyzer()
+        try:
+            characteristics = analyzer.analyze_file(args.input)
+            
+            if args.analyze_file:
+                print(f"\nFile Analysis Results:")
+                print(f"File Size: {characteristics.file_size:,} bytes")
+                print(f"Data Type: {characteristics.data_type.value}")
+                print(f"Data Domain: {characteristics.data_domain.value}")
+                print(f"Entropy: {characteristics.entropy:.3f}")
+                print(f"Predicted Compressibility: {characteristics.predicted_compressibility}")
+                print()
+            
+            if args.recommend_compressor or args.compressor == 'auto':
+                recommender = CompressorRecommender()
+                context = RecommendationContext(optimization_target=args.optimization_target)
+                recommendations = recommender.recommend_compressor(args.input, context)
+                
+                if recommendations:
+                    if args.recommend_compressor:
+                        print(f"Compressor Recommendations (target: {args.optimization_target}):")
+                        for i, rec in enumerate(recommendations[:3], 1):  # Show top 3
+                            print(f"{i}. {rec.compressor_name.upper()} (confidence: {rec.confidence_score:.2f})")
+                            print(f"   Expected ratio: {rec.expected_compression_ratio:.2f}x")
+                            print(f"   Reasoning: {', '.join(rec.reasoning[:2])}")
+                        print()
+                    
+                    if args.compressor == 'auto':
+                        # Use the top recommendation
+                        selected_compressor = recommendations[0].compressor_name
+                        print(f"Auto-selected compressor: {selected_compressor.upper()} (confidence: {recommendations[0].confidence_score:.2f})")
+                        print(f"Reasoning: {', '.join(recommendations[0].reasoning[:3])}")
+                        print()
+                        args.compressor = selected_compressor
+                
+        except Exception as e:
+            logger = get_logger("Main")
+            logger.warning(f"File analysis failed: {e}")
+            if args.compressor == 'auto':
+                print("Auto-selection failed, defaulting to ZSTD")
+                args.compressor = 'zstd'
+
+    # Validate compressor selection
+    if not args.compressor or args.compressor == 'auto':
+        raise ValueError("No compressor selected. Use --compressor or enable auto-selection.")
+
     # Select the appropriate parameter set
     if args.compressor == 'zstd':
         param_ranges = parameters.get('zstd', {})
@@ -183,29 +244,16 @@ def main() -> None:
     elif args.compressor == 'paq8':
         param_ranges = parameters.get('paq8', {})
         compressor = PAQ8Compressor(args.input, temp=args.temp_dir)
-
-
-    else:
+    elif args.compressor == 'ac2':
         if not args.reference:
             raise ValueError("A reference file must be provided when using the AC2 compressor.")
         param_ranges = parameters.get('ac2', {})
         compressor = AC2Compressor(args.input, args.reference, nr_models=args.models, temp=args.temp_dir)
+    else:
+        raise ValueError(f"Unsupported compressor: {args.compressor}")
 
     # Create configuration from CLI arguments
-    config = GAConfig(
-        population_size=args.population_size,
-        generations=args.generations,
-        mutation_rate=args.mutation_rate,
-        crossover_rate=args.crossover_rate,
-        max_threads=args.max_threads,
-        output_dir=args.output_dir,
-        enable_multi_objective=not args.disable_multi_objective,
-        fitness_weight=args.fitness_weight,
-        time_weight=args.time_weight,
-        ram_weight=args.ram_weight,
-        enable_time_penalty=not args.disable_time_penalty,
-        time_penalty_threshold=args.time_penalty_threshold
-    )
+    config = GAConfig.from_args(args)
     
     # Setup logging
     logger = setup_logging(

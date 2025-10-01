@@ -1,0 +1,50 @@
+{
+  "comment": "High-Performance Computing configuration for SLURM clusters",
+  "datasets": [
+    {
+      "dataset_path": "/shared/datasets/text_corpus",
+      "compressors": ["zstd", "lzma", "brotli"],
+      "file_patterns": ["*.txt", "*.log"],
+      "ga_config": {
+        "population_size": 50,
+        "generations": 100,
+        "max_threads": 50,
+        "enable_multi_objective": true,
+        "fitness_weight": 0.5,
+        "time_weight": 0.3,
+        "ram_weight": 0.2
+      }
+    },
+    {
+      "dataset_path": "/shared/datasets/scientific_corpus",
+      "compressors": ["lzma", "zstd"],
+      "file_patterns": ["*.sdf", "*.fasta", "*.csv"],
+      "ga_config": {
+        "population_size": 50,
+        "generations": 100,
+        "max_threads": 50
+      }
+    },
+    {
+      "dataset_path": "/shared/datasets/genomic_data",
+      "compressors": ["lzma"],
+      "file_patterns": ["*.fasta", "*.fastq"],
+      "ga_config": {
+        "population_size": 50,
+        "generations": 100,
+        "max_threads": 50
+      }
+    }
+  ],
+  "max_concurrent_jobs": 20,
+  "enable_smart_scheduling": true,
+  "enable_resource_monitoring": true,
+  "retry_failed_jobs": true,
+  "max_retries": 3,
+  "save_individual_results": true,
+  "save_progress_reports": true,
+  "compress_output": true,
+  "auto_recommend_compressors": true,
+  "use_file_characteristics_filtering": true,
+  "skip_large_files_mb": 5000,
+  "skip_small_files_kb": 10}
